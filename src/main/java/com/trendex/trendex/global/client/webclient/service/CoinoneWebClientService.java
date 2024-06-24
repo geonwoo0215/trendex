@@ -1,9 +1,6 @@
 package com.trendex.trendex.global.client.webclient.service;
 
-import com.trendex.trendex.global.client.webclient.dto.coinone.CoinoneOrderBook;
-import com.trendex.trendex.global.client.webclient.dto.coinone.CoinoneTicker;
-import com.trendex.trendex.global.client.webclient.dto.coinone.CoinoneCurrency;
-import com.trendex.trendex.global.client.webclient.dto.coinone.CoinoneTransactionHistory;
+import com.trendex.trendex.global.client.webclient.dto.coinone.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -100,6 +97,22 @@ public class CoinoneWebClientService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
                 .bodyToMono(CoinoneOrderBook.class)
+                .block();
+
+    }
+
+    public CoinoneCandleData getCandle(String quoteCurrency, String targetCurrency, String interval, int size) {
+
+        return coinoneWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/chart/{quote_currency}/{target_currency}")
+                        .queryParam("interval", interval)
+                        .queryParam("size", size)
+                        .build(quoteCurrency, targetCurrency))
+                .header("accept", "application/json")
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
+                .bodyToMono(CoinoneCandleData.class)
                 .block();
 
     }

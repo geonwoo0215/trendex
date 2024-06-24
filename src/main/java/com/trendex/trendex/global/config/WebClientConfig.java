@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import reactor.netty.http.client.HttpClient;
@@ -27,8 +28,9 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient bithumbWebClient(HttpClient httpClient, DefaultUriBuilderFactory bithumbDefaultUriBuilderFactory) {
+    public WebClient bithumbWebClient(HttpClient httpClient, DefaultUriBuilderFactory bithumbDefaultUriBuilderFactory, ExchangeStrategies exchangeStrategies) {
         return WebClient.builder()
+                .exchangeStrategies(exchangeStrategies)
                 .uriBuilderFactory(bithumbDefaultUriBuilderFactory)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
@@ -83,6 +85,12 @@ public class WebClientConfig {
                 .build();
     }
 
+    @Bean
+    public ExchangeStrategies exchangeStrategies() {
+        return ExchangeStrategies.builder()
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
+                .build();
+    }
     @Bean
     public ConnectionProvider connectionProvider() {
         return ConnectionProvider.builder("http-connection-pool")

@@ -1,9 +1,6 @@
 package com.trendex.trendex.global.client.webclient.service;
 
-import com.trendex.trendex.global.client.webclient.dto.bithumb.BithumbAllOrderBook;
-import com.trendex.trendex.global.client.webclient.dto.bithumb.BithumbOrderBook;
-import com.trendex.trendex.global.client.webclient.dto.bithumb.BithumbTicker;
-import com.trendex.trendex.global.client.webclient.dto.bithumb.BithumbTransactionHistory;
+import com.trendex.trendex.global.client.webclient.dto.bithumb.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -84,6 +81,20 @@ public class BithumbWebClientService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
                 .bodyToMono(BithumbTransactionHistory.class)
+                .block();
+
+    }
+
+    public BithumbCandle getCandle(String orderCurrency, String paymentCurrency, String chartIntervals) {
+
+        return bithumbWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/candlestick/{order_currency}_{payment_currency}/{chart_intervals}")
+                        .build(orderCurrency, paymentCurrency, chartIntervals))
+                .header("accept", "application/json")
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
+                .bodyToMono(BithumbCandle.class)
                 .block();
 
     }

@@ -91,4 +91,21 @@ public class BinanceWebClientService {
 
     }
 
+    public List<BinanceCandle> getCandle(String symbol, String interval) {
+
+        return binanceWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/klines")
+                        .queryParam("symbol",symbol)
+                        .queryParam("interval",interval)
+                        .build())
+                .header("accept", "application/json")
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
+                .bodyToFlux(BinanceCandle.class)
+                .collectList()
+                .block();
+
+    }
+
 }
