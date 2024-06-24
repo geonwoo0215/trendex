@@ -15,7 +15,7 @@ public class UpbitOrderBook {
 
     private double totalBidSize;
 
-    private List<UpbitOrderBookUnit> orderBookUnits;
+    private List<UpbitOrderBookData> orderBookUnits;
 
     private int level;
 

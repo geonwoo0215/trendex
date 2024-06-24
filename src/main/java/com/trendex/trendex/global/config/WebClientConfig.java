@@ -68,6 +68,22 @@ public class WebClientConfig {
     }
 
     @Bean
+    public DefaultUriBuilderFactory binanceDefaultUriBuilderFactory() {
+        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory("https://api.binance.com/api/v3");
+        factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+        return factory;
+    }
+
+    @Bean
+    public WebClient binanceWebClient(HttpClient httpClient, DefaultUriBuilderFactory binanceDefaultUriBuilderFactory) {
+        return WebClient.builder()
+                .uriBuilderFactory(binanceDefaultUriBuilderFactory)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
+    }
+
+    @Bean
     public ConnectionProvider connectionProvider() {
         return ConnectionProvider.builder("http-connection-pool")
                 .maxConnections(100)

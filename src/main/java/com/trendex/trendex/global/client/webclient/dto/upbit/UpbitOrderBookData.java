@@ -1,6 +1,6 @@
 package com.trendex.trendex.global.client.webclient.dto.upbit;
 
-public class UpbitOrderBookUnit {
+public class UpbitOrderBookData {
 
     private long askPrice;
 
