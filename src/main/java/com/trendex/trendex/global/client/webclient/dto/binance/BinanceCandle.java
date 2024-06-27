@@ -1,6 +1,11 @@
 package com.trendex.trendex.global.client.webclient.dto.binance;
 
+import com.trendex.trendex.domain.cryptocandle.model.CryptoCandle;
 import lombok.Getter;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Getter
 public class BinanceCandle {
@@ -41,4 +46,7 @@ public class BinanceCandle {
         this.takerBuyQuoteAssetVolume = takerBuyQuoteAssetVolume;
     }
 
+    public CryptoCandle toCryptoCandle(String symbol) {
+        return new CryptoCandle("Binance", symbol, Double.parseDouble(volume), LocalDateTime.ofInstant(Instant.ofEpochMilli(klineCloseTime), ZoneId.systemDefault()), Double.parseDouble(openPrice), Double.parseDouble(highPrice), Double.parseDouble(lowPrice), Double.parseDouble(closePrice), Double.parseDouble(quoteAssetVolume));
+    }
 }

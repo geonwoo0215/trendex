@@ -101,7 +101,7 @@ public class CoinoneWebClientService {
 
     }
 
-    public CoinoneCandleData getCandle(String quoteCurrency, String targetCurrency, String interval, int size) {
+    public CoinoneCandle getCandle(String quoteCurrency, String targetCurrency, String interval, int size) {
 
         return coinoneWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -112,7 +112,7 @@ public class CoinoneWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(CoinoneCandleData.class)
+                .bodyToMono(CoinoneCandle.class)
                 .block();
 
     }

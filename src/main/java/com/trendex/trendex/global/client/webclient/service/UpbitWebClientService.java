@@ -1,10 +1,7 @@
 package com.trendex.trendex.global.client.webclient.service;
 
 import com.trendex.trendex.global.client.webclient.dto.coinone.CoinoneCurrency;
-import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitCandleData;
-import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitOrderBook;
-import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitTicker;
-import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitTrade;
+import com.trendex.trendex.global.client.webclient.dto.upbit.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -79,6 +76,21 @@ public class UpbitWebClientService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
                 .bodyToFlux(UpbitCandleData.class)
+                .collectList()
+                .block();
+
+    }
+
+    public List<UpbitMarketCode> getMarketCode() {
+
+        return upbitWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/market/all")
+                        .build())
+                .header("accept", "application/json")
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
+                .bodyToFlux(UpbitMarketCode.class)
                 .collectList()
                 .block();
 

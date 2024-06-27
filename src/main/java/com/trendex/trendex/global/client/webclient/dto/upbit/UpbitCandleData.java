@@ -1,8 +1,11 @@
 package com.trendex.trendex.global.client.webclient.dto.upbit;
 
+import com.trendex.trendex.domain.cryptocandle.model.CryptoCandle;
 import lombok.Getter;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Getter
 public class UpbitCandleData {
@@ -28,5 +31,9 @@ public class UpbitCandleData {
     private double candleAccTradeVolume;
 
     private int unit;
+
+    public CryptoCandle toCryptoCandle(String symbol) {
+        return new CryptoCandle("Binance", symbol, candleAccTradeVolume, LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()), openingPrice, highPrice, lowPrice, tradePrice, candleAccTradeVolume);
+    }
 
 }

@@ -99,4 +99,18 @@ public class BithumbWebClientService {
 
     }
 
+    public BithumbWithdrawMinimum getWithdrawMinimum(String currency) {
+
+        return bithumbWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/withdraw/minimum/{currency}")
+                        .build(currency))
+                .header("accept", "application/json")
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
+                .bodyToMono(BithumbWithdrawMinimum.class)
+                .block();
+
+    }
+
 }
