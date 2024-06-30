@@ -1,7 +1,9 @@
 package com.trendex.trendex.global.client.webclient.service;
 
 import com.trendex.trendex.global.client.webclient.dto.binance.*;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,10 +12,14 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class BinanceWebClientService {
 
     private final WebClient binanceWebClient;
+
+    public BinanceWebClientService(@Qualifier("binanceWebClient") WebClient binanceWebClient) {
+        this.binanceWebClient = binanceWebClient;
+    }
 
     public List<BinanceTrade> getTrade(String symbol) {
 
@@ -46,19 +52,17 @@ public class BinanceWebClientService {
 
     }
 
-    public List<BinanceTickerPrice> getTickerPrice() {
-
+    public Mono<List<BinanceTickerPrice>> getTickerPrice() {
         return binanceWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/ticker/price")
-                        .build())
+                        .build()
+                )
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
                 .bodyToFlux(BinanceTickerPrice.class)
-                .collectList()
-                .block();
-
+                .collectList();
     }
 
     public BinanceOrderBook getOrderBook(String symbol) {
@@ -66,7 +70,7 @@ public class BinanceWebClientService {
         return binanceWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/depth")
-                        .queryParam("symbol",symbol)
+                        .queryParam("symbol", symbol)
                         .build())
                 .header("accept", "application/json")
                 .retrieve()
@@ -91,21 +95,20 @@ public class BinanceWebClientService {
 
     }
 
-    public List<BinanceCandle> getCandle(String symbol, String interval) {
-
+    public Mono<List<List<Object>>> getCandle(String symbol, String interval, int limit) {
         return binanceWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/klines")
-                        .queryParam("symbol",symbol)
-                        .queryParam("interval",interval)
-                        .build())
+                        .queryParam("symbol", symbol)
+                        .queryParam("interval", interval)
+                        .queryParam("limit", limit)
+                        .build()
+                )
                 .header("accept", "application/json")
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToFlux(BinanceCandle.class)
-                .collectList()
-                .block();
-
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("Client error")))
+                .bodyToMono(new ParameterizedTypeReference<List<List<Object>>>() {
+                });
     }
 
 }

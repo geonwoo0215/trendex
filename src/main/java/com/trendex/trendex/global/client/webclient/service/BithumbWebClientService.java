@@ -1,16 +1,20 @@
 package com.trendex.trendex.global.client.webclient.service;
 
 import com.trendex.trendex.global.client.webclient.dto.bithumb.*;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
 @Service
-@RequiredArgsConstructor
 public class BithumbWebClientService {
 
     private final WebClient bithumbWebClient;
+
+    public BithumbWebClientService(@Qualifier("bithumbWebClient") WebClient bithumbWebClient) {
+        this.bithumbWebClient = bithumbWebClient;
+    }
 
     public BithumbTicker getAllTicker(String paymentCurrency) {
 
@@ -31,7 +35,7 @@ public class BithumbWebClientService {
         return bithumbWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/ticker/{order_currency}_{payment_currency}")
-                        .build(orderCurrency,paymentCurrency))
+                        .build(orderCurrency, paymentCurrency))
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
@@ -85,7 +89,7 @@ public class BithumbWebClientService {
 
     }
 
-    public BithumbCandle getCandle(String orderCurrency, String paymentCurrency, String chartIntervals) {
+    public Mono<BithumbCandle> getCandle(String orderCurrency, String paymentCurrency, String chartIntervals) {
 
         return bithumbWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -94,12 +98,11 @@ public class BithumbWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(BithumbCandle.class)
-                .block();
+                .bodyToMono(BithumbCandle.class);
 
     }
 
-    public BithumbWithdrawMinimum getWithdrawMinimum(String currency) {
+    public Mono<BithumbWithdrawMinimum> getWithdrawMinimum(String currency) {
 
         return bithumbWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -108,8 +111,7 @@ public class BithumbWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(BithumbWithdrawMinimum.class)
-                .block();
+                .bodyToMono(BithumbWithdrawMinimum.class);
 
     }
 

@@ -3,6 +3,7 @@ package com.trendex.trendex.global.config;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +29,7 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient bithumbWebClient(HttpClient httpClient, DefaultUriBuilderFactory bithumbDefaultUriBuilderFactory, ExchangeStrategies exchangeStrategies) {
+    public WebClient bithumbWebClient(HttpClient httpClient, @Qualifier("bithumbDefaultUriBuilderFactory") DefaultUriBuilderFactory bithumbDefaultUriBuilderFactory, ExchangeStrategies exchangeStrategies) {
         return WebClient.builder()
                 .exchangeStrategies(exchangeStrategies)
                 .uriBuilderFactory(bithumbDefaultUriBuilderFactory)
@@ -45,7 +46,7 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient coinoneWebClient(HttpClient httpClient, DefaultUriBuilderFactory coinoneDefaultUriBuilderFactory) {
+    public WebClient coinoneWebClient(HttpClient httpClient, @Qualifier("coinoneDefaultUriBuilderFactory") DefaultUriBuilderFactory coinoneDefaultUriBuilderFactory) {
         return WebClient.builder()
                 .uriBuilderFactory(coinoneDefaultUriBuilderFactory)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -61,7 +62,7 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient upbitWebClient(HttpClient httpClient, DefaultUriBuilderFactory upbitDefaultUriBuilderFactory) {
+    public WebClient upbitWebClient(HttpClient httpClient, @Qualifier("upbitDefaultUriBuilderFactory") DefaultUriBuilderFactory upbitDefaultUriBuilderFactory) {
         return WebClient.builder()
                 .uriBuilderFactory(upbitDefaultUriBuilderFactory)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -77,7 +78,7 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient binanceWebClient(HttpClient httpClient, DefaultUriBuilderFactory binanceDefaultUriBuilderFactory) {
+    public WebClient binanceWebClient(HttpClient httpClient, @Qualifier("binanceDefaultUriBuilderFactory") DefaultUriBuilderFactory binanceDefaultUriBuilderFactory) {
         return WebClient.builder()
                 .uriBuilderFactory(binanceDefaultUriBuilderFactory)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -91,6 +92,7 @@ public class WebClientConfig {
                 .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
                 .build();
     }
+
     @Bean
     public ConnectionProvider connectionProvider() {
         return ConnectionProvider.builder("http-connection-pool")

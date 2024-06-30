@@ -1,19 +1,22 @@
 package com.trendex.trendex.global.client.webclient.service;
 
 import com.trendex.trendex.global.client.webclient.dto.coinone.*;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Service
-@RequiredArgsConstructor
 public class CoinoneWebClientService {
 
     private final WebClient coinoneWebClient;
 
-    public CoinoneCurrency getAllCurrencies() {
+    public CoinoneWebClientService(@Qualifier("coinoneWebClient") WebClient coinoneWebClient) {
+        this.coinoneWebClient = coinoneWebClient;
+    }
+
+    public Mono<CoinoneCurrency> getAllCurrencies() {
 
         return coinoneWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -22,8 +25,7 @@ public class CoinoneWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(CoinoneCurrency.class)
-                .block();
+                .bodyToMono(CoinoneCurrency.class);
 
     }
 
@@ -101,7 +103,7 @@ public class CoinoneWebClientService {
 
     }
 
-    public CoinoneCandle getCandle(String quoteCurrency, String targetCurrency, String interval, int size) {
+    public Mono<CoinoneCandle> getCandle(String quoteCurrency, String targetCurrency, String interval, int size) {
 
         return coinoneWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -112,8 +114,7 @@ public class CoinoneWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(CoinoneCandle.class)
-                .block();
+                .bodyToMono(CoinoneCandle.class);
 
     }
 

@@ -1,8 +1,7 @@
 package com.trendex.trendex.global.client.webclient.service;
 
-import com.trendex.trendex.global.client.webclient.dto.coinone.CoinoneCurrency;
 import com.trendex.trendex.global.client.webclient.dto.upbit.*;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -11,17 +10,20 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class UpbitWebClientService {
 
     private final WebClient upbitWebClient;
+
+    public UpbitWebClientService(@Qualifier("upbitWebClient") WebClient upbitWebClient) {
+        this.upbitWebClient = upbitWebClient;
+    }
 
     public List<UpbitTicker> getTicker(String markets) {
 
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/ticker")
-                        .queryParam("markets",markets)
+                        .queryParam("markets", markets)
                         .build())
                 .header("accept", "application/json")
                 .retrieve()
@@ -37,7 +39,7 @@ public class UpbitWebClientService {
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/trades/ticks")
-                        .queryParam("market",market)
+                        .queryParam("market", market)
                         .build())
                 .header("accept", "application/json")
                 .retrieve()
@@ -53,7 +55,7 @@ public class UpbitWebClientService {
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/orderbook")
-                        .queryParam("markets",markets)
+                        .queryParam("markets", markets)
                         .build())
                 .header("accept", "application/json")
                 .retrieve()
@@ -64,7 +66,7 @@ public class UpbitWebClientService {
 
     }
 
-    public List<UpbitCandleData> getMinuteCandle(int units, String market, int count) {
+    public Mono<List<UpbitCandleData>> getMinuteCandle(int units, String market, int count) {
 
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -76,12 +78,11 @@ public class UpbitWebClientService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
                 .bodyToFlux(UpbitCandleData.class)
-                .collectList()
-                .block();
+                .collectList();
 
     }
 
-    public List<UpbitMarketCode> getMarketCode() {
+    public Mono<List<UpbitMarketCode>> getMarketCode() {
 
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -91,8 +92,7 @@ public class UpbitWebClientService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
                 .bodyToFlux(UpbitMarketCode.class)
-                .collectList()
-                .block();
+                .collectList();
 
     }
 
