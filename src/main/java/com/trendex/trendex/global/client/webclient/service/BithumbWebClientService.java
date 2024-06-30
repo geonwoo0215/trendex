@@ -1,11 +1,16 @@
 package com.trendex.trendex.global.client.webclient.service;
 
 import com.trendex.trendex.global.client.webclient.dto.bithumb.*;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 @Service
 public class BithumbWebClientService {
@@ -89,6 +94,7 @@ public class BithumbWebClientService {
 
     }
 
+    @RateLimiter(name = "bithumb")
     public Mono<BithumbCandle> getCandle(String orderCurrency, String paymentCurrency, String chartIntervals) {
 
         return bithumbWebClient.get()
@@ -98,10 +104,13 @@ public class BithumbWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(BithumbCandle.class);
+                .bodyToMono(BithumbCandle.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+                        .filter(throwable -> throwable instanceof WebClientRequestException));
 
     }
 
+    @RateLimiter(name = "bithumb")
     public Mono<BithumbWithdrawMinimum> getWithdrawMinimum(String currency) {
 
         return bithumbWebClient.get()

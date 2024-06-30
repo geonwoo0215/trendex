@@ -1,6 +1,7 @@
 package com.trendex.trendex.global.client.webclient.service;
 
 import com.trendex.trendex.global.client.webclient.dto.upbit.*;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -66,6 +67,7 @@ public class UpbitWebClientService {
 
     }
 
+    @RateLimiter(name = "upbit")
     public Mono<List<UpbitCandleData>> getMinuteCandle(int units, String market, int count) {
 
         return upbitWebClient.get()
@@ -82,6 +84,7 @@ public class UpbitWebClientService {
 
     }
 
+    @RateLimiter(name = "upbit")
     public Mono<List<UpbitMarketCode>> getMarketCode() {
 
         return upbitWebClient.get()

@@ -1,6 +1,7 @@
 package com.trendex.trendex.global.client.webclient.service;
 
 import com.trendex.trendex.global.client.webclient.dto.coinone.*;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ public class CoinoneWebClientService {
         this.coinoneWebClient = coinoneWebClient;
     }
 
+    @RateLimiter(name = "coinone")
     public Mono<CoinoneCurrency> getAllCurrencies() {
 
         return coinoneWebClient.get()
@@ -103,6 +105,7 @@ public class CoinoneWebClientService {
 
     }
 
+    @RateLimiter(name = "coinone")
     public Mono<CoinoneCandle> getCandle(String quoteCurrency, String targetCurrency, String interval, int size) {
 
         return coinoneWebClient.get()

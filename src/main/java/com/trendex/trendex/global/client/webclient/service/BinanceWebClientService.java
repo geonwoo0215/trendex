@@ -1,6 +1,7 @@
 package com.trendex.trendex.global.client.webclient.service;
 
 import com.trendex.trendex.global.client.webclient.dto.binance.*;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
@@ -52,6 +53,7 @@ public class BinanceWebClientService {
 
     }
 
+    @RateLimiter(name = "binance")
     public Mono<List<BinanceTickerPrice>> getTickerPrice() {
         return binanceWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -95,6 +97,7 @@ public class BinanceWebClientService {
 
     }
 
+    @RateLimiter(name = "binance")
     public Mono<List<List<Object>>> getCandle(String symbol, String interval, int limit) {
         return binanceWebClient.get()
                 .uri(uriBuilder -> uriBuilder

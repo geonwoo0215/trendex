@@ -6,7 +6,9 @@ import lombok.Getter;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -17,7 +19,9 @@ public class BithumbCandle {
     private List<List<Object>> data;
 
     public List<CryptoCandle> toCryptoCandleList(String symbol) {
-        return data.stream()
+        return Optional.ofNullable(data)
+                .orElse(Collections.emptyList())
+                .stream()
                 .map(candle -> convertToCryptoCandle(symbol, candle))
                 .collect(Collectors.toList());
     }

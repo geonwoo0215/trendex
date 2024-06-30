@@ -10,16 +10,13 @@ import com.trendex.trendex.global.client.webclient.service.BinanceWebClientServi
 import com.trendex.trendex.global.client.webclient.service.BithumbWebClientService;
 import com.trendex.trendex.global.client.webclient.service.CoinoneWebClientService;
 import com.trendex.trendex.global.client.webclient.service.UpbitWebClientService;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class CryptoCandleFetchService {
 
@@ -31,8 +28,6 @@ public class CryptoCandleFetchService {
 
     private final UpbitWebClientService upbitWebClientService;
 
-    //        @Scheduled(cron = "0 */1 * * * *")
-    @RateLimiter(name = "binance")
     public List<CryptoCandle> fetchBinanceData(List<BinanceSymbol> binanceSymbols) {
 
         return Flux.fromIterable(binanceSymbols)
@@ -46,8 +41,7 @@ public class CryptoCandleFetchService {
 
     }
 
-    //    @Scheduled(cron = "0 */1 * * * *")
-    @RateLimiter(name = "bithumb")
+
     public List<CryptoCandle> fetchBithumbData(List<BithumbSymbol> bithumbSymbols) {
 
         return Flux.fromIterable(bithumbSymbols)
@@ -59,8 +53,6 @@ public class CryptoCandleFetchService {
 
     }
 
-    //    @Scheduled(cron = "0 */1 * * * *")
-    @RateLimiter(name = "coinone")
     public List<CryptoCandle> fetchCoinoneData(List<CoinoneSymbol> coinoneSymbols) {
 
         return Flux.fromIterable(coinoneSymbols)
@@ -74,8 +66,6 @@ public class CryptoCandleFetchService {
 
     }
 
-    //    @Scheduled(cron = "0 */1 * * * *")
-    @RateLimiter(name = "upbit")
     public List<CryptoCandle> fetchUpbitData(List<UpbitSymbol> upbitSymbols) {
 
         return Flux.fromIterable(upbitSymbols)
