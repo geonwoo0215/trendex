@@ -110,7 +110,7 @@ public class BinanceWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("Client error")))
-                .bodyToMono(new ParameterizedTypeReference<List<List<Object>>>() {
+                .bodyToMono(new ParameterizedTypeReference<>() {
                 });
     }
 

@@ -20,7 +20,7 @@ public class UpbitSymbolJdbcRepository {
 
     public void batchInsert(List<UpbitSymbol> upbitSymbols) {
 
-        String sql = "INSERT INTO bithumb_symbol (symbol) VALUES (?)";
+        String sql = "INSERT INTO upbit_symbol (symbol) VALUES (?)";
 
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override

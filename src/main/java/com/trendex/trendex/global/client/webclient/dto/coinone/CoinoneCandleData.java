@@ -22,17 +22,15 @@ public class CoinoneCandleData {
     private String close;
 
     @JsonProperty("target_volume")
-    private String  targetVolume;
+    private String targetVolume;
 
     @JsonProperty("quote_volume")
-    private String  quoteVolume;
+    private String quoteVolume;
 
 
     public CryptoCandle toCryptoCandle(String symbol) {
-        return new CryptoCandle("Binance", symbol, Double.parseDouble(targetVolume), LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()), Double.parseDouble(open), Double.parseDouble(high), Double.parseDouble(low), Double.parseDouble(close), Double.parseDouble(quoteVolume));
+        return new CryptoCandle("Coinone", symbol, Double.parseDouble(targetVolume), LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()), Double.parseDouble(open), Double.parseDouble(high), Double.parseDouble(low), Double.parseDouble(close), Double.parseDouble(quoteVolume));
     }
-
-
 
 
 }

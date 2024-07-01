@@ -33,7 +33,7 @@ public class UpbitCandleData {
     private int unit;
 
     public CryptoCandle toCryptoCandle(String symbol) {
-        return new CryptoCandle("Binance", symbol, candleAccTradeVolume, LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()), openingPrice, highPrice, lowPrice, tradePrice, candleAccTradeVolume);
+        return new CryptoCandle("Upbit", symbol, candleAccTradeVolume, LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()), openingPrice, highPrice, lowPrice, tradePrice, candleAccTradeVolume);
     }
 
 }

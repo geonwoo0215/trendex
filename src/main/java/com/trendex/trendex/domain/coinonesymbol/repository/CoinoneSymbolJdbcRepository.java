@@ -20,7 +20,7 @@ public class CoinoneSymbolJdbcRepository {
 
     public void batchInsert(List<CoinoneSymbol> coinoneSymbols) {
 
-        String sql = "INSERT INTO bithumb_symbol (symbol) VALUES (?)";
+        String sql = "INSERT INTO coinone_symbol (symbol) VALUES (?)";
 
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override

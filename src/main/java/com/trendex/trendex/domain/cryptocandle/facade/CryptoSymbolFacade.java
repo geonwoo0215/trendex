@@ -10,6 +10,7 @@ import com.trendex.trendex.domain.cryptocandle.service.CryptoSymbolFetchService;
 import com.trendex.trendex.domain.upbitsymbol.model.UpbitSymbol;
 import com.trendex.trendex.domain.upbitsymbol.service.UpbitSymbolService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,22 +29,26 @@ public class CryptoSymbolFacade {
 
     private final UpbitSymbolService upbitSymbolService;
 
+    @Scheduled(cron = "0 0 0 * * SUN")
     public void fetchAndSaveBinanceData() {
 
         List<BinanceSymbol> binanceSymbols = cryptoSymbolFetchService.fetchBinanceData();
         binanceSymbolService.saveAll(binanceSymbols);
     }
 
+    @Scheduled(cron = "0 0 0 * * SUN")
     public void fetchAndSaveBithumbData() {
         List<BithumbSymbol> bithumbSymbols = cryptoSymbolFetchService.fetchBithumbData();
         bithumbSymbolService.saveAll(bithumbSymbols);
     }
 
+    @Scheduled(cron = "0 0 0 * * SUN")
     public void fetchAndSaveCoinoneData() {
         List<CoinoneSymbol> coinoneSymbols = cryptoSymbolFetchService.fetchCoinoneData();
         coinoneSymbolService.saveAll(coinoneSymbols);
     }
 
+    @Scheduled(cron = "0 0 0 * * SUN")
     public void fetchAndSaveUpbitData() {
         List<UpbitSymbol> upbitSymbols = cryptoSymbolFetchService.fetchUpbitData();
         upbitSymbolService.saveAll(upbitSymbols);

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class CryptoCandleFetchService {
 
         return Flux.fromIterable(binanceSymbols)
                 .flatMap(binanceSymbol ->
-                        binanceWebClientService.getCandle(binanceSymbol.getSymbol(), "3m", 200)
+                        binanceWebClientService.getCandle(binanceSymbol.getSymbol(), "3m", 20)
                                 .flatMapMany(Flux::fromIterable)
                                 .map(binanceCandle -> mapToBinanceCandle(binanceCandle).toCryptoCandle(binanceSymbol.getSymbol()))
                 )
@@ -57,9 +58,14 @@ public class CryptoCandleFetchService {
 
         return Flux.fromIterable(coinoneSymbols)
                 .flatMap(coinoneSymbol ->
-                        coinoneWebClientService.getCandle("KRW", coinoneSymbol.getSymbol(), "3m", 200)
-                                .flatMapMany(coinoneCandle -> Flux.fromIterable(coinoneCandle.getChart())
-                                        .map(chartData -> chartData.toCryptoCandle(coinoneSymbol.getSymbol())))
+                        coinoneWebClientService.getCandle("KRW", coinoneSymbol.getSymbol(), "3m", 20)
+                                .flatMapMany(coinoneCandle ->
+                                        Optional.ofNullable(coinoneCandle.getChart())
+                                                .map(chart -> Flux.fromIterable(chart)
+                                                        .map(chartData -> chartData.toCryptoCandle(coinoneSymbol.getSymbol()))
+                                                )
+                                                .orElseGet(Flux::empty)
+                                )
                 )
                 .collectList()
                 .block();
@@ -70,7 +76,7 @@ public class CryptoCandleFetchService {
 
         return Flux.fromIterable(upbitSymbols)
                 .flatMap(upbitSymbol ->
-                        upbitWebClientService.getMinuteCandle(3, upbitSymbol.getSymbol(), 200)
+                        upbitWebClientService.getMinuteCandle(3, upbitSymbol.getSymbol(), 20)
                                 .flatMapMany(Flux::fromIterable)
                                 .map(upbitCandleData -> upbitCandleData.toCryptoCandle(upbitSymbol.getSymbol()))
                 )
