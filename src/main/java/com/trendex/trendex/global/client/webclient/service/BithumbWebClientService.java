@@ -95,7 +95,7 @@ public class BithumbWebClientService {
     }
 
     @RateLimiter(name = "bithumb")
-    public Mono<BithumbCandle> getCandle(String orderCurrency, String paymentCurrency, String chartIntervals) {
+    public Mono<BithumbCandleResponse> getCandle(String orderCurrency, String paymentCurrency, String chartIntervals) {
 
         return bithumbWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -104,7 +104,7 @@ public class BithumbWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(BithumbCandle.class)
+                .bodyToMono(BithumbCandleResponse.class)
                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
                         .filter(throwable -> throwable instanceof WebClientRequestException));
 

@@ -68,7 +68,7 @@ public class UpbitWebClientService {
     }
 
     @RateLimiter(name = "upbit")
-    public Mono<List<UpbitCandleData>> getMinuteCandle(int units, String market, int count) {
+    public Mono<List<UpbitCandleResponse>> getMinuteCandle(int units, String market, int count) {
 
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -79,7 +79,7 @@ public class UpbitWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToFlux(UpbitCandleData.class)
+                .bodyToFlux(UpbitCandleResponse.class)
                 .collectList();
 
     }
