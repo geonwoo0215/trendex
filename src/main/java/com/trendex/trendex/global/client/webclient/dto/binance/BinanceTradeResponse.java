@@ -1,9 +1,10 @@
 package com.trendex.trendex.global.client.webclient.dto.binance;
 
+import com.trendex.trendex.domain.trade.binancetrade.model.BinanceTrade;
 import lombok.Getter;
 
 @Getter
-public class BinanceTrade {
+public class BinanceTradeResponse {
 
     private String id;
 
@@ -18,5 +19,9 @@ public class BinanceTrade {
     private boolean isBuyerMaker;
 
     private boolean isBestMatch;
+
+    public BinanceTrade toBinanceTrade(String symbol) {
+        return new BinanceTrade(id, symbol, price, qty, quoteQty, timestamp, isBuyerMaker, isBestMatch);
+    }
 
 }

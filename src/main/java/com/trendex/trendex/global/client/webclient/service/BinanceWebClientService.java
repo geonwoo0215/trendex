@@ -22,7 +22,7 @@ public class BinanceWebClientService {
         this.binanceWebClient = binanceWebClient;
     }
 
-    public List<BinanceTrade> getTrade(String symbol) {
+    public Mono<List<BinanceTradeResponse>> getTrade(String symbol) {
 
         return binanceWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -32,9 +32,8 @@ public class BinanceWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToFlux(BinanceTrade.class)
-                .collectList()
-                .block();
+                .bodyToFlux(BinanceTradeResponse.class)
+                .collectList();
 
     }
 

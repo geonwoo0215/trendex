@@ -75,7 +75,7 @@ public class CoinoneWebClientService {
 
     }
 
-    public CoinoneTransactionHistory getTransactionHistory(String quoteCurrency, String targetCurrency, int size) {
+    public Mono<CoinoneTransactionHistory> getTransactionHistory(String quoteCurrency, String targetCurrency, int size) {
 
         return coinoneWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -85,8 +85,7 @@ public class CoinoneWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(CoinoneTransactionHistory.class)
-                .block();
+                .bodyToMono(CoinoneTransactionHistory.class);
 
     }
 

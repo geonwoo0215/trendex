@@ -79,7 +79,7 @@ public class BithumbWebClientService {
 
     }
 
-    public BithumbTransactionHistory getTransactionHistory(String orderCurrency, String paymentCurrency, int count) {
+    public Mono<BithumbTransactionHistory> getTransactionHistory(String orderCurrency, String paymentCurrency, int count) {
 
         return bithumbWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -89,8 +89,7 @@ public class BithumbWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(BithumbTransactionHistory.class)
-                .block();
+                .bodyToMono(BithumbTransactionHistory.class);
 
     }
 

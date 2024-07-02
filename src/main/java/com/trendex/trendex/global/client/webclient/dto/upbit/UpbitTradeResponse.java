@@ -1,9 +1,10 @@
 package com.trendex.trendex.global.client.webclient.dto.upbit;
 
+import com.trendex.trendex.domain.trade.upbittrade.model.UpbitTrade;
 import lombok.Getter;
 
 @Getter
-public class UpbitTrade {
+public class UpbitTradeResponse {
 
     private String market;
 
@@ -22,5 +23,9 @@ public class UpbitTrade {
     private long changePrice;
 
     private String askBid;
+
+    public UpbitTrade toUpbitTrade() {
+        return new UpbitTrade(market, tradeDateUtc, tradeTimeUtc, timestamp, tradePrice, tradeVolume, prevClosingPrice, changePrice, askBid);
+    }
 
 }
