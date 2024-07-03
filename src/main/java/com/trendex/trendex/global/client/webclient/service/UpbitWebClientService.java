@@ -35,7 +35,7 @@ public class UpbitWebClientService {
 
     }
 
-    public List<UpbitTrade> getTrades(String market) {
+    public Mono<List<UpbitTradeResponse>> getTrades(String market) {
 
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -45,9 +45,8 @@ public class UpbitWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToFlux(UpbitTrade.class)
-                .collectList()
-                .block();
+                .bodyToFlux(UpbitTradeResponse.class)
+                .collectList();
 
     }
 
