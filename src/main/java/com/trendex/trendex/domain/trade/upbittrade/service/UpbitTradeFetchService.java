@@ -7,6 +7,7 @@ import com.trendex.trendex.global.client.webclient.service.UpbitWebClientService
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 
@@ -16,16 +17,17 @@ public class UpbitTradeFetchService {
 
     private final UpbitWebClientService upbitWebClientService;
 
-    public List<UpbitTrade> fetchUpbitData(List<UpbitSymbol> upbitSymbols) {
+    public Flux<UpbitTrade> fetchUpbitData(List<UpbitSymbol> upbitSymbols) {
 
         return Flux.fromIterable(upbitSymbols)
+                .parallel()
+                .runOn(Schedulers.parallel())
                 .flatMap(upbitSymbol ->
                         upbitWebClientService.getTrades(upbitSymbol.getSymbol())
                                 .flatMapMany(Flux::fromIterable)
                                 .map(UpbitTradeResponse::toUpbitTrade)
                 )
-                .collectList()
-                .block();
+                .sequential();
 
     }
 

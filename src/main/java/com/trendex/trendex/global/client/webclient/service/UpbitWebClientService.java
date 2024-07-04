@@ -35,12 +35,14 @@ public class UpbitWebClientService {
 
     }
 
+    @RateLimiter(name = "upbit")
     public Mono<List<UpbitTradeResponse>> getTrades(String market) {
 
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/trades/ticks")
                         .queryParam("market", market)
+                        .queryParam("count", 100)
                         .build())
                 .header("accept", "application/json")
                 .retrieve()
@@ -50,7 +52,8 @@ public class UpbitWebClientService {
 
     }
 
-    public List<UpbitOrderBook> getOrderBook(String markets) {
+    @RateLimiter(name = "upbit")
+    public Mono<List<UpbitOrderBookResponse>> getOrderBook(String markets) {
 
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -60,9 +63,8 @@ public class UpbitWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToFlux(UpbitOrderBook.class)
-                .collectList()
-                .block();
+                .bodyToFlux(UpbitOrderBookResponse.class)
+                .collectList();
 
     }
 

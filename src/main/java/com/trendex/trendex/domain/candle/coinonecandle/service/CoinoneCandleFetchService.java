@@ -6,6 +6,7 @@ import com.trendex.trendex.global.client.webclient.service.CoinoneWebClientServi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +17,11 @@ public class CoinoneCandleFetchService {
 
     private final CoinoneWebClientService coinoneWebClientService;
 
-    public List<CoinoneCandle> fetchCoinoneData(List<CoinoneSymbol> coinoneSymbols) {
+    public Flux<CoinoneCandle> fetchCoinoneData(List<CoinoneSymbol> coinoneSymbols) {
 
         return Flux.fromIterable(coinoneSymbols)
+                .parallel()
+                .runOn(Schedulers.parallel())
                 .flatMap(coinoneSymbol ->
                         coinoneWebClientService.getCandle("KRW", coinoneSymbol.getSymbol(), "3m", 20)
                                 .flatMapMany(coinoneCandle ->
@@ -29,8 +32,7 @@ public class CoinoneCandleFetchService {
                                                 .orElseGet(Flux::empty)
                                 )
                 )
-                .collectList()
-                .block();
+                .sequential();
 
     }
 }

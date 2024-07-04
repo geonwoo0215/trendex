@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class UpbitOrderBook {
+public class UpbitOrderBookResponse {
 
     private String market;
 

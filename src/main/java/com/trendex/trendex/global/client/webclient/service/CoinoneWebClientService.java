@@ -75,6 +75,7 @@ public class CoinoneWebClientService {
 
     }
 
+    @RateLimiter(name = "coinone")
     public Mono<CoinoneTransactionHistory> getTransactionHistory(String quoteCurrency, String targetCurrency, int size) {
 
         return coinoneWebClient.get()
@@ -89,7 +90,8 @@ public class CoinoneWebClientService {
 
     }
 
-    public CoinoneOrderBook getOrderBook(String quoteCurrency, String targetCurrency, int size) {
+    @RateLimiter(name = "coinone")
+    public Mono<CoinoneOrderBookResponse> getOrderBook(String quoteCurrency, String targetCurrency, int size) {
 
         return coinoneWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -99,8 +101,7 @@ public class CoinoneWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(CoinoneOrderBook.class)
-                .block();
+                .bodyToMono(CoinoneOrderBookResponse.class);
 
     }
 

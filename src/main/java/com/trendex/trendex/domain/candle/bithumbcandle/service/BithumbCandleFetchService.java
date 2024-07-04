@@ -6,6 +6,7 @@ import com.trendex.trendex.global.client.webclient.service.BithumbWebClientServi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 
@@ -15,14 +16,15 @@ public class BithumbCandleFetchService {
 
     private final BithumbWebClientService bithumbWebClientService;
 
-    public List<BithumbCandle> fetchBithumbData(List<BithumbSymbol> bithumbSymbols) {
+    public Flux<BithumbCandle> fetchBithumbData(List<BithumbSymbol> bithumbSymbols) {
 
         return Flux.fromIterable(bithumbSymbols)
+                .parallel()
+                .runOn(Schedulers.parallel())
                 .flatMap(bithumbSymbol ->
                         bithumbWebClientService.getCandle(bithumbSymbol.getSymbol(), "KRW", "3m")
                                 .flatMapMany(candle -> Flux.fromIterable(candle.toCryptoCandleList(bithumbSymbol.getSymbol()))))
-                .collectList()
-                .block();
+                .sequential();
 
     }
 

@@ -7,6 +7,7 @@ import com.trendex.trendex.global.client.webclient.service.BinanceWebClientServi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 
@@ -16,16 +17,17 @@ public class BinanceCandleFetchService {
 
     private final BinanceWebClientService binanceWebClientService;
 
-    public List<BinanceCandle> fetchBinanceData(List<BinanceSymbol> binanceSymbols) {
+    public Flux<BinanceCandle> fetchBinanceData(List<BinanceSymbol> binanceSymbols) {
 
         return Flux.fromIterable(binanceSymbols)
+                .parallel()
+                .runOn(Schedulers.parallel())
                 .flatMap(binanceSymbol ->
                         binanceWebClientService.getCandle(binanceSymbol.getSymbol(), "3m", 20)
                                 .flatMapMany(Flux::fromIterable)
                                 .map(binanceCandle -> mapToBinanceCandle(binanceCandle).toBinanceCandle(binanceSymbol.getSymbol()))
                 )
-                .collectList()
-                .block();
+                .sequential();
 
     }
 

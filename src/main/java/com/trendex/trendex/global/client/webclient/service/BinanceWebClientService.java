@@ -22,6 +22,7 @@ public class BinanceWebClientService {
         this.binanceWebClient = binanceWebClient;
     }
 
+    @RateLimiter(name = "binanceTrade")
     public Mono<List<BinanceTradeResponse>> getTrade(String symbol) {
 
         return binanceWebClient.get()
@@ -66,7 +67,8 @@ public class BinanceWebClientService {
                 .collectList();
     }
 
-    public BinanceOrderBook getOrderBook(String symbol) {
+    @RateLimiter(name = "binance")
+    public Mono<BinanceOrderBookResponse> getOrderBook(String symbol) {
 
         return binanceWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -76,8 +78,7 @@ public class BinanceWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToMono(BinanceOrderBook.class)
-                .block();
+                .bodyToMono(BinanceOrderBookResponse.class);
 
     }
 

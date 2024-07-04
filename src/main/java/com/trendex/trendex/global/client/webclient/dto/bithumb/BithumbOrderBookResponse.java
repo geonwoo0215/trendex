@@ -3,7 +3,7 @@ package com.trendex.trendex.global.client.webclient.dto.bithumb;
 import lombok.Getter;
 
 @Getter
-public class BithumbOrderBook {
+public class BithumbOrderBookResponse {
 
     private String status;
 

@@ -6,8 +6,11 @@ import com.trendex.trendex.global.client.webclient.service.BithumbWebClientServi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,19 +18,20 @@ public class BithumbTradeFetchService {
 
     private final BithumbWebClientService bithumbWebClientService;
 
-    public List<BithumbTrade> fetchBithumbData(List<BithumbSymbol> bithumbSymbols) {
+    public Flux<BithumbTrade> fetchBithumbData(List<BithumbSymbol> bithumbSymbols) {
 
         return Flux.fromIterable(bithumbSymbols)
+                .parallel()
+                .runOn(Schedulers.parallel())
                 .flatMap(bithumbSymbol ->
                         bithumbWebClientService.getTransactionHistory(bithumbSymbol.getSymbol(), "KRW", 100)
-                                .flatMapMany(transactionHistory -> Flux.fromIterable(transactionHistory.getData())
-                                        .map(bithumbTransactionHistoryData ->
-                                                bithumbTransactionHistoryData.toBithumbTrade(bithumbSymbol.getSymbol()))
+                                .flatMapMany(transactionHistory ->
+                                        Flux.fromIterable(Optional.ofNullable(transactionHistory.getData()).orElse(Collections.emptyList()))
+                                                .map(bithumbTransactionHistoryData ->
+                                                        bithumbTransactionHistoryData.toBithumbTrade(bithumbSymbol.getSymbol()))
                                 )
                 )
-                .collectList()
-                .block();
-
+                .sequential();
     }
 
 }
