@@ -37,7 +37,7 @@ public class UpbitCandle {
 
     private double candleAccTradePrice;
 
-    private double candleAccTradeVolume;
+    private double volume;
 
     private int unit;
 
@@ -51,7 +51,7 @@ public class UpbitCandle {
         this.tradePrice = tradePrice;
         this.timestamp = timestamp;
         this.candleAccTradePrice = candleAccTradePrice;
-        this.candleAccTradeVolume = candleAccTradeVolume;
+        this.volume = candleAccTradeVolume;
         this.unit = unit;
     }
 }

@@ -1,5 +1,7 @@
 package com.trendex.trendex.domain.candle.upbitcandle.facade;
 
+import com.trendex.trendex.domain.candle.CandleAnalysisService;
+import com.trendex.trendex.domain.candle.upbitcandle.model.UpbitCandle;
 import com.trendex.trendex.domain.candle.upbitcandle.service.UpbitCandleFetchService;
 import com.trendex.trendex.domain.candle.upbitcandle.service.UpbitCandleService;
 import com.trendex.trendex.domain.symbol.upbitsymbol.model.UpbitSymbol;
@@ -8,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -24,14 +27,26 @@ public class UpbitCandleFacade {
 
     private final UpbitSymbolService upbitSymbolService;
 
-    @Scheduled(cron = "0 */3 * * * *")
-    public void fetchAndSaveUpbitData() {
+    private final CandleAnalysisService candleAnalysisService;
+
+    @Scheduled(cron = "0 */1 * * * *")
+    public void fetchSaveAndAnalyzeUpbitData() {
         List<UpbitSymbol> upbitSymbols = upbitSymbolService.findAll();
-        upbitCandleFetchService.fetchUpbitData(upbitSymbols)
-                .buffer(1000)
+
+        Flux<UpbitCandle> upbitCandlesFlux = upbitCandleFetchService.fetchUpbitData(upbitSymbols).share();
+
+        upbitCandlesFlux
+                .buffer(100)
                 .flatMap(upbitCandles -> Mono.fromFuture(CompletableFuture.runAsync(() -> upbitCandleService.saveAll(upbitCandles))))
                 .subscribe();
-        log.info("upbit fetch done");
+
+        upbitCandlesFlux
+                .flatMap(upbitCandle ->
+                        Mono.fromFuture(CompletableFuture.supplyAsync(() ->
+                                        upbitCandleService.getCandlesByMarketAndTime(upbitCandle.getMarket())))
+                                .map(upbitCandleMappings ->
+                                        candleAnalysisService.isVolumeSpike(upbitCandleMappings, upbitCandle.getVolume())))
+                .subscribe();
     }
 
 }

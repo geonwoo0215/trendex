@@ -34,7 +34,7 @@ public class CoinoneCandleJdbcRepository {
                 ps.setString(5, candle.getLow());
                 ps.setString(6, candle.getClose());
                 ps.setString(7, candle.getTargetVolume());
-                ps.setString(8, candle.getQuoteVolume());
+                ps.setString(8, candle.getVolume());
             }
 
             @Override

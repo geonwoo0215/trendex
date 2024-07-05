@@ -31,7 +31,7 @@ public class CoinoneCandle {
 
     private String targetVolume;
 
-    private String quoteVolume;
+    private String volume;
 
     public CoinoneCandle(String symbol, long timestamp, String open, String high, String low, String close, String targetVolume, String quoteVolume) {
         this.symbol = symbol;
@@ -41,6 +41,6 @@ public class CoinoneCandle {
         this.low = low;
         this.close = close;
         this.targetVolume = targetVolume;
-        this.quoteVolume = quoteVolume;
+        this.volume = quoteVolume;
     }
 }

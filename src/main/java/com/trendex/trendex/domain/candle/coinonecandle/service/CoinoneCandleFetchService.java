@@ -23,7 +23,7 @@ public class CoinoneCandleFetchService {
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(coinoneSymbol ->
-                        coinoneWebClientService.getCandle("KRW", coinoneSymbol.getSymbol(), "3m", 20)
+                        coinoneWebClientService.getCandle("KRW", coinoneSymbol.getSymbol(), "3m", 1)
                                 .flatMapMany(coinoneCandle ->
                                         Optional.ofNullable(coinoneCandle.getChart())
                                                 .map(chart -> Flux.fromIterable(chart)

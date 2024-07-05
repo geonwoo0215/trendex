@@ -19,22 +19,23 @@ public class UpbitTradeJdbcRepository {
     }
 
     public void batchInsert(List<UpbitTrade> upbitTrades) {
-        String sql = "INSERT INTO upbit_trade (market, trade_date_utc, trade_time_utc, timestamp, trade_price, trade_volume, prev_closing_price, change_price, ask_bid) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO upbit_trade (id, market, trade_date_utc, trade_time_utc, timestamp, trade_price, trade_volume, prev_closing_price, change_price, ask_bid) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 UpbitTrade upbitTrade = upbitTrades.get(i);
-                ps.setString(1, upbitTrade.getMarket());
-                ps.setString(2, upbitTrade.getTradeDateUtc());
-                ps.setString(3, upbitTrade.getTradeTimeUtc());
-                ps.setLong(4, upbitTrade.getTimestamp());
-                ps.setLong(5, upbitTrade.getTradePrice());
-                ps.setDouble(6, upbitTrade.getTradeVolume());
-                ps.setLong(7, upbitTrade.getPrevClosingPrice());
-                ps.setLong(8, upbitTrade.getChangePrice());
-                ps.setString(9, upbitTrade.getAskBid());
+                ps.setLong(1, upbitTrade.getId());
+                ps.setString(2, upbitTrade.getMarket());
+                ps.setString(3, upbitTrade.getTradeDateUtc());
+                ps.setString(4, upbitTrade.getTradeTimeUtc());
+                ps.setLong(5, upbitTrade.getTimestamp());
+                ps.setLong(6, upbitTrade.getTradePrice());
+                ps.setDouble(7, upbitTrade.getTradeVolume());
+                ps.setLong(8, upbitTrade.getPrevClosingPrice());
+                ps.setLong(9, upbitTrade.getChangePrice());
+                ps.setString(10, upbitTrade.getAskBid());
             }
 
             @Override

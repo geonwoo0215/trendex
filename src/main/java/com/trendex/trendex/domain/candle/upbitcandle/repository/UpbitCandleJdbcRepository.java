@@ -37,7 +37,7 @@ public class UpbitCandleJdbcRepository {
                 ps.setDouble(7, candle.getTradePrice());
                 ps.setLong(8, candle.getTimestamp());
                 ps.setDouble(9, candle.getCandleAccTradePrice());
-                ps.setDouble(10, candle.getCandleAccTradeVolume());
+                ps.setDouble(10, candle.getVolume());
                 ps.setInt(11, candle.getUnit());
             }
 

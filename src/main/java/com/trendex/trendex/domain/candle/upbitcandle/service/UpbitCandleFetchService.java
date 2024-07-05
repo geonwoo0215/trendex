@@ -2,6 +2,7 @@ package com.trendex.trendex.domain.candle.upbitcandle.service;
 
 import com.trendex.trendex.domain.candle.upbitcandle.model.UpbitCandle;
 import com.trendex.trendex.domain.symbol.upbitsymbol.model.UpbitSymbol;
+import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitCandleResponse;
 import com.trendex.trendex.global.client.webclient.service.UpbitWebClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,9 @@ public class UpbitCandleFetchService {
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(upbitSymbol ->
-                        upbitWebClientService.getMinuteCandle(3, upbitSymbol.getSymbol(), 20)
+                        upbitWebClientService.getMinuteCandle(1, upbitSymbol.getSymbol(), 1)
                                 .flatMapMany(Flux::fromIterable)
-                                .map(upbitCandleData -> upbitCandleData.toUpbitCandle())
+                                .map(UpbitCandleResponse::toUpbitCandle)
                 )
                 .sequential();
 
