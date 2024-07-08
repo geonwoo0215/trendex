@@ -6,9 +6,9 @@ import com.trendex.trendex.domain.candle.binancecandle.service.BinanceCandleFetc
 import com.trendex.trendex.domain.candle.binancecandle.service.BinanceCandleService;
 import com.trendex.trendex.domain.symbol.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.domain.symbol.binancesymbol.service.BinanceSymbolService;
+import com.trendex.trendex.global.client.webclient.service.TelegramWebClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -29,7 +29,9 @@ public class BinanceCandleFacade {
 
     private final CandleAnalysisService candleAnalysisService;
 
-    @Scheduled(cron = "0 */3 * * * *")
+    private final TelegramWebClientService telegramWebClientService;
+
+    //    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveBinanceData() {
         List<BinanceSymbol> binanceSymbols = binanceSymbolService.findAll();
 
@@ -42,12 +44,25 @@ public class BinanceCandleFacade {
 
         binanceCandleFlux
                 .flatMap(binanceCandle ->
-                        Mono.fromFuture(CompletableFuture.supplyAsync(() ->
-                                        binanceCandleService.getCandlesBySymbolAndTime(binanceCandle.getSymbol())))
-                                .map(binanceCandleMappings ->
-                                        candleAnalysisService.isVolumeSpike(binanceCandleMappings, Double.parseDouble(binanceCandle.getVolume()))))
+                        Mono.fromFuture(() ->
+                                        CompletableFuture.supplyAsync(() ->
+                                                binanceCandleService.getCandlesBySymbolAndTime(binanceCandle.getSymbol())
+                                        )
+                                )
+                                .flatMap(binanceCandleMappings ->
+                                        Mono.defer(() -> {
+                                            double volume = Double.parseDouble(binanceCandle.getVolume());
+                                            boolean volumeSpike = candleAnalysisService.isVolumeSpike(binanceCandleMappings, volume);
+                                            if (volumeSpike) {
+                                                String text = binanceCandle.getSymbol() + "급등하였습니다.";
+                                                return telegramWebClientService.sendMessage(text);
+                                            } else {
+                                                return Mono.empty();
+                                            }
+                                        })
+                                )
+                )
                 .subscribe();
-
         log.info("binance fetch done");
     }
 

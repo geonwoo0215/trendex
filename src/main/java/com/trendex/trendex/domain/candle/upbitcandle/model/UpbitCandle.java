@@ -37,11 +37,11 @@ public class UpbitCandle {
 
     private double candleAccTradePrice;
 
-    private double volume;
+    private String volume;
 
     private int unit;
 
-    public UpbitCandle(String market, LocalDateTime candleDateTimeUtc, LocalDateTime candleDateTimeKst, double openingPrice, double highPrice, double lowPrice, double tradePrice, long timestamp, double candleAccTradePrice, double candleAccTradeVolume, int unit) {
+    public UpbitCandle(String market, LocalDateTime candleDateTimeUtc, LocalDateTime candleDateTimeKst, double openingPrice, double highPrice, double lowPrice, double tradePrice, long timestamp, double candleAccTradePrice, String candleAccTradeVolume, int unit) {
         this.market = market;
         this.candleDateTimeUtc = candleDateTimeUtc;
         this.candleDateTimeKst = candleDateTimeKst;

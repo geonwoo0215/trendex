@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CryptoVolume {
+public class CryptoClosePrice {
 
-    private String volume;
+    private Double tradePrice;
 
-    public CryptoVolume(String volume) {
-        this.volume = volume;
+    public CryptoClosePrice(Double tradePrice) {
+        this.tradePrice = tradePrice;
     }
 }

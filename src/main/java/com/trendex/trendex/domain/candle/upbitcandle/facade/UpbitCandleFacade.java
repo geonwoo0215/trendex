@@ -8,7 +8,6 @@ import com.trendex.trendex.domain.symbol.upbitsymbol.model.UpbitSymbol;
 import com.trendex.trendex.domain.symbol.upbitsymbol.service.UpbitSymbolService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -29,7 +28,7 @@ public class UpbitCandleFacade {
 
     private final CandleAnalysisService candleAnalysisService;
 
-    @Scheduled(cron = "0 */1 * * * *")
+    //    @Scheduled(cron = "0 */1 * * * *")
     public void fetchSaveAndAnalyzeUpbitData() {
         List<UpbitSymbol> upbitSymbols = upbitSymbolService.findAll();
 
@@ -45,7 +44,7 @@ public class UpbitCandleFacade {
                         Mono.fromFuture(CompletableFuture.supplyAsync(() ->
                                         upbitCandleService.getCandlesByMarketAndTime(upbitCandle.getMarket())))
                                 .map(upbitCandleMappings ->
-                                        candleAnalysisService.isVolumeSpike(upbitCandleMappings, upbitCandle.getVolume())))
+                                        candleAnalysisService.isVolumeSpike(upbitCandleMappings, Double.parseDouble(upbitCandle.getVolume()))))
                 .subscribe();
     }
 

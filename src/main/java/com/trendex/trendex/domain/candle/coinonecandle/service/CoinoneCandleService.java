@@ -1,5 +1,6 @@
 package com.trendex.trendex.domain.candle.coinonecandle.service;
 
+import com.trendex.trendex.domain.candle.CandleAnalysisTime;
 import com.trendex.trendex.domain.candle.CryptoVolume;
 import com.trendex.trendex.domain.candle.coinonecandle.model.CoinoneCandle;
 import com.trendex.trendex.domain.candle.coinonecandle.repository.CoinoneCandleJdbcRepository;
@@ -8,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -28,10 +27,7 @@ public class CoinoneCandleService {
     @Transactional(readOnly = true)
     public List<CryptoVolume> getCandlesBySymbolAndTime(String symbol) {
 
-        long startTimestamp = LocalDateTime.now().minusMinutes(11L).toEpochSecond(ZoneOffset.UTC) * 1000;
-        long endTimestamp = LocalDateTime.now().minusMinutes(2L).toEpochSecond(ZoneOffset.UTC) * 1000;
-
-        return coinoneCandleRepository.findBySymbolAndTimestampBetweenOrderByTimestampAsc(symbol, startTimestamp, endTimestamp);
+        return coinoneCandleRepository.findVolumeBySymbolAndTimeRange(symbol, CandleAnalysisTime.STAR_TIME_STAMP.getTime(), CandleAnalysisTime.END_TIME_STAMP.getTime());
     }
 
 }

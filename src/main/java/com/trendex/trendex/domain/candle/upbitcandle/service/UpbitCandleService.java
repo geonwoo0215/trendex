@@ -26,7 +26,7 @@ public class UpbitCandleService {
 
     @Transactional(readOnly = true)
     public List<CryptoVolume> getCandlesByMarketAndTime(String market) {
-        return upbitCandleRepository.findByMarketAndCandleDateTimeKstBetweenOrderByCandleDateTimeKstAsc(market, LocalDateTime.now().minusMinutes(11L), LocalDateTime.now().minusMinutes(2L));
+        return upbitCandleRepository.findVolumeBySymbolAndTimeRange(market, LocalDateTime.now().minusMinutes(11L), LocalDateTime.now().minusMinutes(2L));
     }
 
 

@@ -6,7 +6,6 @@ import com.trendex.trendex.domain.trade.bithumbtrade.service.BithumbTradeFetchSe
 import com.trendex.trendex.domain.trade.bithumbtrade.service.BithumbTradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -24,7 +23,7 @@ public class BithumbTradeFacade {
 
     private final BithumbTradeFetchService bithumbTradeFetchService;
 
-    @Scheduled(cron = "0 */3 * * * *")
+    //    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveBithumbData() {
         List<BithumbSymbol> bithumbSymbols = bithumbSymbolService.findAll();
         bithumbTradeFetchService.fetchBithumbData(bithumbSymbols)

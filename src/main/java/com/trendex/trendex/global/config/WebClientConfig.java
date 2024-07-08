@@ -87,6 +87,22 @@ public class WebClientConfig {
     }
 
     @Bean
+    public DefaultUriBuilderFactory telegramDefaultUriBuilderFactory() {
+        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory("https://api.telegram.org");
+        factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+        return factory;
+    }
+
+    @Bean
+    public WebClient telegramWebClient(HttpClient httpClient, @Qualifier("telegramDefaultUriBuilderFactory") DefaultUriBuilderFactory telegramDefaultUriBuilderFactory) {
+        return WebClient.builder()
+                .uriBuilderFactory(telegramDefaultUriBuilderFactory)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
+    }
+
+    @Bean
     public ExchangeStrategies exchangeStrategies() {
         return ExchangeStrategies.builder()
                 .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))

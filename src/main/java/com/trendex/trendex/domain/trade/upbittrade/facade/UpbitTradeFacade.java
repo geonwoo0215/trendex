@@ -6,7 +6,6 @@ import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeFetchServic
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -24,7 +23,7 @@ public class UpbitTradeFacade {
 
     private final UpbitSymbolService upbitSymbolService;
 
-    @Scheduled(cron = "0 */3 * * * *")
+    //    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveUpbitData() {
         List<UpbitSymbol> upbitSymbols = upbitSymbolService.findAll();
 

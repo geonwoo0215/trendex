@@ -21,7 +21,7 @@ public class UpbitCandleJdbcRepository {
     public void batchInsert(List<UpbitCandle> upbitCandles) {
         String sql = "INSERT INTO upbit_candle (" +
                 "market, candle_date_time_utc, candle_date_time_kst, opening_price, high_price, low_price, trade_price, " +
-                "timestamp, candle_acc_trade_price, candle_acc_trade_volume, unit" +
+                "timestamp, candle_acc_trade_price, volume, unit" +
                 ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -37,7 +37,7 @@ public class UpbitCandleJdbcRepository {
                 ps.setDouble(7, candle.getTradePrice());
                 ps.setLong(8, candle.getTimestamp());
                 ps.setDouble(9, candle.getCandleAccTradePrice());
-                ps.setDouble(10, candle.getVolume());
+                ps.setString(10, candle.getVolume());
                 ps.setInt(11, candle.getUnit());
             }
 

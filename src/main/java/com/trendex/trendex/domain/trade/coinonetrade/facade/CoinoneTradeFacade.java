@@ -6,7 +6,6 @@ import com.trendex.trendex.domain.trade.coinonetrade.service.CoinoneTradeFetchSe
 import com.trendex.trendex.domain.trade.coinonetrade.service.CoinoneTradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -24,7 +23,7 @@ public class CoinoneTradeFacade {
 
     private final CoinoneSymbolService coinoneSymbolService;
 
-    @Scheduled(cron = "0 */3 * * * *")
+    //    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveCoinoneData() {
         List<CoinoneSymbol> coinoneSymbols = coinoneSymbolService.findAll();
 

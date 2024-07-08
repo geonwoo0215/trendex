@@ -1,5 +1,6 @@
 package com.trendex.trendex.global.client.webclient.dto.upbit;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trendex.trendex.domain.candle.upbitcandle.model.UpbitCandle;
 import lombok.Getter;
 
@@ -20,13 +21,14 @@ public class UpbitCandleResponse {
 
     private double lowPrice;
 
+    @JsonProperty("trade_price")
     private double tradePrice;
 
     private long timestamp;
 
     private double candleAccTradePrice;
 
-    private double candleAccTradeVolume;
+    private String candleAccTradeVolume;
 
     private int unit;
 
