@@ -1,6 +1,6 @@
 package com.trendex.trendex.domain.candle.upbitcandle.service;
 
-import com.trendex.trendex.domain.candle.CryptoVolume;
+import com.trendex.trendex.domain.candle.CryptoClosePrice;
 import com.trendex.trendex.domain.candle.upbitcandle.model.UpbitCandle;
 import com.trendex.trendex.domain.candle.upbitcandle.repository.UpbitCandleJdbcRepository;
 import com.trendex.trendex.domain.candle.upbitcandle.repository.UpbitCandleRepository;
@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +26,19 @@ public class UpbitCandleService {
     }
 
     @Transactional(readOnly = true)
-    public List<CryptoVolume> getCandlesByMarketAndTime(String market) {
-        return upbitCandleRepository.findVolumeBySymbolAndTimeRange(market, LocalDateTime.now().minusMinutes(11L), LocalDateTime.now().minusMinutes(2L));
+    public List<Double> getCandlesByMarketAndTime(String market) {
+        return upbitCandleRepository.findVolumeBySymbolAndTimeRange(market, LocalDateTime.now().minusMinutes(11L), LocalDateTime.now().minusMinutes(2L))
+                .stream()
+                .map(cryptoVolume -> Double.parseDouble(cryptoVolume.getVolume()))
+                .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<Double> getClosePricesBySymbolAndTime(String market, long timestamp) {
+        return upbitCandleRepository.findClosePriceBySymbolAndTime(market, timestamp)
+                .stream()
+                .map(CryptoClosePrice::getTradePrice)
+                .collect(Collectors.toList());
+    }
 
 }

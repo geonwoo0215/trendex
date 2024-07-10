@@ -27,7 +27,7 @@ public class BithumbCandleService {
     @Transactional(readOnly = true)
     public List<CryptoVolume> getCandlesBySymbolAndTime(String symbol) {
 
-        return bithumbCandleRepository.findVolumeBySymbolAndTimeRange(symbol, CandleAnalysisTime.STAR_TIME_STAMP.getTime(), CandleAnalysisTime.STAR_TIME_STAMP.getTime());
+        return bithumbCandleRepository.findVolumeBySymbolAndTimeRange(symbol, CandleAnalysisTime.RSI_START_TIME_STAMP.getTime(), CandleAnalysisTime.RSI_START_TIME_STAMP.getTime());
     }
 
 }

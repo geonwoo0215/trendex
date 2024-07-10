@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -52,7 +53,10 @@ public class BinanceCandleFacade {
                                 .flatMap(binanceCandleMappings ->
                                         Mono.defer(() -> {
                                             double volume = Double.parseDouble(binanceCandle.getVolume());
-                                            boolean volumeSpike = candleAnalysisService.isVolumeSpike(binanceCandleMappings, volume);
+                                            List<Double> list = binanceCandleMappings.stream()
+                                                    .map(cryptoVolume -> Double.parseDouble(cryptoVolume.getVolume()))
+                                                    .collect(Collectors.toList());
+                                            boolean volumeSpike = candleAnalysisService.isVolumeSpike(list, volume);
                                             if (volumeSpike) {
                                                 String text = binanceCandle.getSymbol() + "급등하였습니다.";
                                                 return telegramWebClientService.sendMessage(text);

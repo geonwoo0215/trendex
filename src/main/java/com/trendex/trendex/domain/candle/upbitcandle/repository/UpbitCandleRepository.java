@@ -23,7 +23,7 @@ public interface UpbitCandleRepository extends JpaRepository<UpbitCandle, Long> 
             "WHERE u.market = :market " +
             "AND u.timestamp >= :start " +
             "ORDER BY u.timestamp ASC")
-    List<CryptoClosePrice> findVolumeBySymbolAndTime(@Param("market") String market, @Param("start") long start);
+    List<CryptoClosePrice> findClosePriceBySymbolAndTime(@Param("market") String market, @Param("start") long start);
 
 
 }

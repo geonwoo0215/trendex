@@ -13,6 +13,12 @@ public class CandleAnalysisService {
 
     private static final int RSI_PERIOD = 14;
 
+    private static final int MACD_TWELVE = 12;
+
+    private static final int MACD_TWENTY_SIX = 26;
+
+    private static final int MACD_NINE = 9;
+
     public double calculateRSI(List<CryptoClosePrice> prices) {
         if (prices == null || prices.size() <= RSI_PERIOD) {
             throw new IllegalArgumentException("Not enough data points to calculate RSI");
@@ -60,10 +66,11 @@ public class CandleAnalysisService {
         return rsi;
     }
 
-    public boolean isVolumeSpike(List<CryptoVolume> upbitCandleMappings, double currentVolume) {
+    public boolean isVolumeSpike(List<Double> upbitCandleMappings, double currentVolume) {
 
-        double average = upbitCandleMappings.stream()
-                .mapToDouble(cryptoVolume -> Double.parseDouble(cryptoVolume.getVolume()))
+        double average = upbitCandleMappings
+                .stream()
+                .mapToDouble(Double::doubleValue)
                 .average()
                 .orElse(0.0);
 
@@ -74,5 +81,44 @@ public class CandleAnalysisService {
         return currentVolume >= average * SPIKE_VALUE;
 
     }
+
+    public double calculateEMA(List<Double> prices, int period) {
+        double ema = prices.get(0);
+        double multiplier = 2.0 / (period + 1);
+
+        for (int i = 1; i < prices.size(); i++) {
+            ema = (prices.get(i) * multiplier + ema * (1 - multiplier));
+        }
+
+        return ema;
+    }
+
+    public double calculateMACD(List<Double> cryptoClosePrices26, List<Double> cryptoClosePrices12) {
+
+        double ema26 = calculateEMA(cryptoClosePrices26, MACD_TWENTY_SIX);
+        double ema12 = calculateEMA(cryptoClosePrices12, MACD_TWELVE);
+
+        return ema12 - ema26;
+    }
+
+    public double calculateMACDSignal(List<Double> macd) {
+
+        return calculateEMA(macd, MACD_NINE);
+    }
+
+    public Decision decideByMacd(double macd, double macdSignal, boolean higherThanMacd) {
+        if (higherThanMacd) {
+            if (macd > macdSignal) {
+                return Decision.BUY;
+            }
+        } else {
+            if (macd < macdSignal) {
+                return Decision.SELL;
+            }
+        }
+        return Decision.NOTHING;
+
+    }
+
 
 }
