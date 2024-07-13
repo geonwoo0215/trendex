@@ -2,8 +2,8 @@ package com.trendex.trendex.domain.orderbook.upbitorderbook.facade;
 
 import com.trendex.trendex.domain.orderbook.upbitorderbook.service.UpbitOrderBookFetchService;
 import com.trendex.trendex.domain.orderbook.upbitorderbook.service.UpbitOrderBookService;
-import com.trendex.trendex.domain.symbol.upbitsymbol.model.UpbitSymbol;
-import com.trendex.trendex.domain.symbol.upbitsymbol.service.UpbitSymbolService;
+import com.trendex.trendex.domain.symbol.upbitmarket.model.UpbitMarket;
+import com.trendex.trendex.domain.symbol.upbitmarket.service.UpbitMarketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,11 @@ public class UpbitOrderBookFacade {
 
     private final UpbitOrderBookFetchService upbitOrderBookFetchService;
 
-    private final UpbitSymbolService upbitSymbolService;
+    private final UpbitMarketService upbitMarketService;
 
     //    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveUpbitData() {
-        List<UpbitSymbol> upbitSymbols = upbitSymbolService.findAll();
+        List<UpbitMarket> upbitSymbols = upbitMarketService.findAll();
         upbitOrderBookFetchService.fetchUpbitData(upbitSymbols)
                 .buffer(1000)
                 .flatMap(upbitOrderBooks -> Mono.fromFuture(CompletableFuture.runAsync(() -> upbitOrderBookService.saveAll(upbitOrderBooks))))

@@ -1,7 +1,7 @@
 package com.trendex.trendex.domain.trade.upbittrade.facade;
 
-import com.trendex.trendex.domain.symbol.upbitsymbol.model.UpbitSymbol;
-import com.trendex.trendex.domain.symbol.upbitsymbol.service.UpbitSymbolService;
+import com.trendex.trendex.domain.symbol.upbitmarket.model.UpbitMarket;
+import com.trendex.trendex.domain.symbol.upbitmarket.service.UpbitMarketService;
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeFetchService;
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeService;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,11 @@ public class UpbitTradeFacade {
 
     private final UpbitTradeFetchService upbitTradeFetchService;
 
-    private final UpbitSymbolService upbitSymbolService;
+    private final UpbitMarketService upbitMarketService;
 
     //    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveUpbitData() {
-        List<UpbitSymbol> upbitSymbols = upbitSymbolService.findAll();
+        List<UpbitMarket> upbitSymbols = upbitMarketService.findAll();
 
         upbitTradeFetchService.fetchUpbitData(upbitSymbols)
                 .buffer(1000)

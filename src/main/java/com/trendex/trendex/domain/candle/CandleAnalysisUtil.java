@@ -1,13 +1,11 @@
 package com.trendex.trendex.domain.candle;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class CandleAnalysisService {
+@Slf4j
+public class CandleAnalysisUtil {
 
     private static final double SPIKE_VALUE = 10.0;
 
@@ -19,21 +17,21 @@ public class CandleAnalysisService {
 
     private static final int MACD_NINE = 9;
 
-    public double calculateRSI(List<CryptoClosePrice> prices) {
+    public static Decision calculateRSI(List<Double> prices) {
         if (prices == null || prices.size() <= RSI_PERIOD) {
-            throw new IllegalArgumentException("Not enough data points to calculate RSI");
+            return Decision.NOTHING;
         }
 
         double emaGain = 0;
         double emaLoss = 0;
-        double prevPrice = prices.get(0).getTradePrice();
+        double prevPrice = prices.get(0);
         double initialGain = 0;
         double initialLoss = 0;
 
         double multiplier = 2.0 / (RSI_PERIOD + 1);
 
         for (int i = 1; i <= RSI_PERIOD; i++) {
-            double price = prices.get(i).getTradePrice();
+            double price = prices.get(i);
             double change = price - prevPrice;
             prevPrice = price;
 
@@ -50,7 +48,7 @@ public class CandleAnalysisService {
         emaLoss = avgLoss;
 
         for (int i = RSI_PERIOD + 1; i < prices.size(); i++) {
-            double price = prices.get(i).getTradePrice();
+            double price = prices.get(i);
             double change = price - prevPrice;
             prevPrice = price;
 
@@ -63,12 +61,20 @@ public class CandleAnalysisService {
 
         double rs = emaGain / emaLoss;
         double rsi = 100 - (100 / (1 + rs));
-        return rsi;
+        log.info("rsi value {}", rsi);
+
+        if (rsi > 70) {
+            return Decision.SELL;
+        } else if (rsi < 30) {
+            return Decision.BUY;
+        }
+
+        return Decision.NOTHING;
     }
 
-    public boolean isVolumeSpike(List<Double> upbitCandleMappings, double currentVolume) {
+    public static boolean isVolumeSpike(List<Double> candleVolumes, double currentVolume) {
 
-        double average = upbitCandleMappings
+        double average = candleVolumes
                 .stream()
                 .mapToDouble(Double::doubleValue)
                 .average()
@@ -82,7 +88,7 @@ public class CandleAnalysisService {
 
     }
 
-    public double calculateEMA(List<Double> prices, int period) {
+    public static double calculateEMA(List<Double> prices, int period) {
         double ema = prices.get(0);
         double multiplier = 2.0 / (period + 1);
 
@@ -93,7 +99,7 @@ public class CandleAnalysisService {
         return ema;
     }
 
-    public double calculateMACD(List<Double> cryptoClosePrices26, List<Double> cryptoClosePrices12) {
+    public static double calculateMACD(List<Double> cryptoClosePrices26, List<Double> cryptoClosePrices12) {
 
         double ema26 = calculateEMA(cryptoClosePrices26, MACD_TWENTY_SIX);
         double ema12 = calculateEMA(cryptoClosePrices12, MACD_TWELVE);
@@ -101,12 +107,12 @@ public class CandleAnalysisService {
         return ema12 - ema26;
     }
 
-    public double calculateMACDSignal(List<Double> macd) {
+    public static double calculateMACDSignal(List<Double> macd) {
 
         return calculateEMA(macd, MACD_NINE);
     }
 
-    public Decision decideByMacd(double macd, double macdSignal, boolean higherThanMacd) {
+    public static Decision decideByMacd(double macd, double macdSignal, boolean higherThanMacd) {
         if (higherThanMacd) {
             if (macd > macdSignal) {
                 return Decision.BUY;

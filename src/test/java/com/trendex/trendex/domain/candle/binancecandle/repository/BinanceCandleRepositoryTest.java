@@ -29,7 +29,7 @@ class BinanceCandleRepositoryTest {
 
         binanceCandleRepository.saveAll(binanceCandles);
 
-        List<CryptoVolume> cryptoVolumes = binanceCandleRepository.findVolumeBySymbolAndTimeRange(binanceCandles.get(0).getSymbol(), CandleAnalysisTime.RSI_START_TIME_STAMP.getTime(), CandleAnalysisTime.RSI_END_TIME_STAMP.getTime());
+        List<CryptoVolume> cryptoVolumes = binanceCandleRepository.findVolumeBySymbolAndTimeRange(binanceCandles.get(0).getSymbol(), CandleAnalysisTime.Volume_START_TIME_STAMP.getTime(), CandleAnalysisTime.Volume_END_TIME_STAMP.getTime());
         Assertions.assertThat(cryptoVolumes).hasSize(binanceCandles.size());
 
     }

@@ -1,6 +1,5 @@
 package com.trendex.trendex.domain.candle.bithumbcandle.facade;
 
-import com.trendex.trendex.domain.candle.CandleAnalysisService;
 import com.trendex.trendex.domain.candle.bithumbcandle.service.BithumbCandleFetchService;
 import com.trendex.trendex.domain.candle.bithumbcandle.service.BithumbCandleService;
 import com.trendex.trendex.domain.symbol.bithumbsymbol.service.BithumbSymbolService;
@@ -19,7 +18,6 @@ public class BithumbCandleFacade {
 
     private final BithumbCandleFetchService bithumbCandleFetchService;
 
-    private final CandleAnalysisService candleAnalysisService;
 
     //    @Scheduled(cron = "0 */3 * * * *")
 //    public void fetchAndSaveBithumbData() {

@@ -1,4 +1,4 @@
-package com.trendex.trendex.domain.symbol.upbitsymbol.model;
+package com.trendex.trendex.domain.symbol.upbitmarket.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UpbitSymbol {
+public class UpbitMarket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String symbol;
+    private String market;
 
-    public UpbitSymbol(String symbol) {
-        this.symbol = symbol;
+    public UpbitMarket(String market) {
+        this.market = market;
     }
 }

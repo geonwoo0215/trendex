@@ -1,6 +1,6 @@
-package com.trendex.trendex.domain.symbol.upbitsymbol.service;
+package com.trendex.trendex.domain.symbol.upbitmarket.service;
 
-import com.trendex.trendex.domain.symbol.upbitsymbol.model.UpbitSymbol;
+import com.trendex.trendex.domain.symbol.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.global.client.webclient.service.UpbitWebClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UpbitSymbolFetchService {
+public class UpbitMarketFetchService {
 
     private final UpbitWebClientService upbitWebClientService;
 
-    public List<UpbitSymbol> fetchUpbitData() {
+    public List<UpbitMarket> fetchUpbitData() {
 
         return upbitWebClientService.getMarketCode()
                 .flatMap(upbitMarketCodes -> Mono.just(
                         upbitMarketCodes.stream()
-                                .map(upbitMarketCode -> new UpbitSymbol(upbitMarketCode.getMarket()))
+                                .map(upbitMarketCode -> new UpbitMarket(upbitMarketCode.getMarket()))
                                 .collect(Collectors.toList())
                 ))
                 .block();

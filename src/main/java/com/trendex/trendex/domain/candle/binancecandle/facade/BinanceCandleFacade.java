@@ -1,6 +1,6 @@
 package com.trendex.trendex.domain.candle.binancecandle.facade;
 
-import com.trendex.trendex.domain.candle.CandleAnalysisService;
+import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
 import com.trendex.trendex.domain.candle.binancecandle.model.BinanceCandle;
 import com.trendex.trendex.domain.candle.binancecandle.service.BinanceCandleFetchService;
 import com.trendex.trendex.domain.candle.binancecandle.service.BinanceCandleService;
@@ -28,8 +28,6 @@ public class BinanceCandleFacade {
 
     private final BinanceCandleFetchService binanceCandleFetchService;
 
-    private final CandleAnalysisService candleAnalysisService;
-
     private final TelegramWebClientService telegramWebClientService;
 
     //    @Scheduled(cron = "0 */3 * * * *")
@@ -56,7 +54,7 @@ public class BinanceCandleFacade {
                                             List<Double> list = binanceCandleMappings.stream()
                                                     .map(cryptoVolume -> Double.parseDouble(cryptoVolume.getVolume()))
                                                     .collect(Collectors.toList());
-                                            boolean volumeSpike = candleAnalysisService.isVolumeSpike(list, volume);
+                                            boolean volumeSpike = CandleAnalysisUtil.isVolumeSpike(list, volume);
                                             if (volumeSpike) {
                                                 String text = binanceCandle.getSymbol() + "급등하였습니다.";
                                                 return telegramWebClientService.sendMessage(text);

@@ -1,9 +1,15 @@
 package com.trendex.trendex.domain.macd.upbitmacd.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Getter
@@ -14,19 +20,22 @@ public class UpbitMacd {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String symbol;
+    private String market;
 
-    private Double value;
+    private Double macdValue;
+
+    private Double macdSignalValue;
+
+    private boolean signalHigherThanMacd;
 
     private Long timestamp;
 
-    @OneToOne(mappedBy = "upbitMacd")
-    private UpbitMacdSignal upbitMacdSignal;
-
-    public UpbitMacd(String symbol, Double value, Long timestamp) {
-        this.symbol = symbol;
-        this.value = value;
-        this.timestamp = timestamp;
+    public UpbitMacd(String market, Double macdValue, Double macdSignalValue) {
+        this.market = market;
+        this.macdValue = macdValue;
+        this.macdSignalValue = macdSignalValue;
+        this.signalHigherThanMacd = macdSignalValue > macdValue;
+        this.timestamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000;
     }
 
 }

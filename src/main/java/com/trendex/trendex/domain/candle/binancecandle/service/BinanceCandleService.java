@@ -27,7 +27,7 @@ public class BinanceCandleService {
     @Transactional(readOnly = true)
     public List<CryptoVolume> getCandlesBySymbolAndTime(String symbol) {
 
-        return binanceCandleRepository.findVolumeBySymbolAndTimeRange(symbol, CandleAnalysisTime.RSI_START_TIME_STAMP.getTime(), CandleAnalysisTime.RSI_END_TIME_STAMP.getTime());
+        return binanceCandleRepository.findVolumeBySymbolAndTimeRange(symbol, CandleAnalysisTime.Volume_START_TIME_STAMP.getTime(), CandleAnalysisTime.Volume_END_TIME_STAMP.getTime());
     }
 
 }

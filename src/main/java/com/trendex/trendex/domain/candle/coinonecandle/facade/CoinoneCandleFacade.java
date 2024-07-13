@@ -1,6 +1,5 @@
 package com.trendex.trendex.domain.candle.coinonecandle.facade;
 
-import com.trendex.trendex.domain.candle.CandleAnalysisService;
 import com.trendex.trendex.domain.candle.coinonecandle.service.CoinoneCandleFetchService;
 import com.trendex.trendex.domain.candle.coinonecandle.service.CoinoneCandleService;
 import com.trendex.trendex.domain.symbol.coinonesymbol.service.CoinoneSymbolService;
@@ -18,8 +17,6 @@ public class CoinoneCandleFacade {
     private final CoinoneCandleFetchService coinoneCandleFetchService;
 
     private final CoinoneSymbolService coinoneSymbolService;
-
-    private final CandleAnalysisService candleAnalysisService;
 
     //    @Scheduled(cron = "0 */3 * * * *")
 //    public void fetchAndSaveCoinoneData() {

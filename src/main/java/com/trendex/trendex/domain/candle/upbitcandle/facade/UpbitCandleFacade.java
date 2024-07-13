@@ -1,29 +1,25 @@
 package com.trendex.trendex.domain.candle.upbitcandle.facade;
 
-import com.trendex.trendex.domain.candle.CandleAnalysisService;
 import com.trendex.trendex.domain.candle.CandleAnalysisTime;
+import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
 import com.trendex.trendex.domain.candle.Decision;
 import com.trendex.trendex.domain.candle.upbitcandle.model.UpbitCandle;
 import com.trendex.trendex.domain.candle.upbitcandle.service.UpbitCandleFetchService;
 import com.trendex.trendex.domain.candle.upbitcandle.service.UpbitCandleService;
 import com.trendex.trendex.domain.macd.upbitmacd.model.UpbitMacd;
 import com.trendex.trendex.domain.macd.upbitmacd.service.UpbitMacdService;
-import com.trendex.trendex.domain.macd.upbitmacd.service.UpbitMacdSignalService;
-import com.trendex.trendex.domain.order.model.Order;
-import com.trendex.trendex.domain.order.repository.OrderRepository;
-import com.trendex.trendex.domain.symbol.upbitsymbol.model.UpbitSymbol;
-import com.trendex.trendex.domain.symbol.upbitsymbol.service.UpbitSymbolService;
-import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitAccountResponse;
-import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitOrderResponse;
+import com.trendex.trendex.domain.symbol.upbitmarket.model.UpbitMarket;
+import com.trendex.trendex.domain.symbol.upbitmarket.service.UpbitMarketService;
+import com.trendex.trendex.global.client.webclient.service.TelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -34,81 +30,63 @@ public class UpbitCandleFacade {
 
     private final UpbitCandleFetchService upbitCandleFetchService;
 
-    private final UpbitSymbolService upbitSymbolService;
-
-    private final CandleAnalysisService candleAnalysisService;
+    private final UpbitMarketService upbitMarketService;
 
     private final UpbitMacdService upbitMacdService;
 
-    private final UpbitMacdSignalService upbitMacdSignalService;
-
-    private final OrderRepository orderRepository;
+    private final TelegramService telegramService;
 
     @Scheduled(cron = "0 */1 * * * *")
     public void fetchSaveAndAnalyzeUpbitData() {
-//        List<UpbitSymbol> upbitSymbols = upbitSymbolService.findAll();
-        List<UpbitSymbol> upbitSymbols = List.of(new UpbitSymbol("KRW-HPO"));
-        Flux<UpbitCandle> upbitCandlesFlux = upbitCandleFetchService.fetchUpbitData(upbitSymbols).share();
-
-        saveUpbitCandles(upbitCandlesFlux);
-//        analyzeUpbitCandles(upbitCandlesFlux);
+        List<UpbitMarket> upbitMarkets = upbitMarketService.findAll();
+        Flux<UpbitCandle> upbitCandlesFlux = upbitCandleFetchService.fetchUpbitData(upbitMarkets).share();
+        saveAll(upbitCandlesFlux)
+                .then(Mono.fromRunnable(() -> saveMacd(upbitMarkets)));
+        volumeAnalyze(upbitCandlesFlux);
     }
 
-    private void saveUpbitCandles(Flux<UpbitCandle> upbitCandlesFlux) {
-        upbitCandlesFlux
-                .buffer(100)
-                .flatMap(upbitCandles -> Mono.fromFuture(CompletableFuture.runAsync(() -> upbitCandleService.saveAll(upbitCandles))))
-                .subscribe();
+    private Flux<Void> saveAll(Flux<UpbitCandle> upbitCandlesFlux) {
+        return upbitCandleService.saveAll(upbitCandlesFlux);
     }
 
-    private void analyzeUpbitCandles(Flux<UpbitCandle> upbitCandlesFlux) {
-        upbitCandlesFlux
-                .flatMap(upbitCandle ->
-                        Mono.fromFuture(CompletableFuture.supplyAsync(() ->
-                                        upbitCandleService.getCandlesByMarketAndTime(upbitCandle.getMarket())))
-                                .map(upbitCandleMappings ->
-                                        candleAnalysisService.isVolumeSpike(upbitCandleMappings, Double.parseDouble(upbitCandle.getVolume()))))
-                .subscribe();
-    }
-
-    @Scheduled(fixedRate = 60000)
-    public void autoTrading() {
-
-        String market = "KRW-HPO";
-        String symbol = "HPO";
-
-        List<UpbitAccountResponse> listMono = upbitCandleFetchService.fetchKrwVolume();
-        listMono.stream()
-                .forEach(upbitAccountResponse -> {
-                    log.info("{}", upbitAccountResponse.getCurrency());
-                    log.info("{}", upbitAccountResponse.getBalance());
+    public void saveMacd(List<UpbitMarket> upbitMarkets) {
+        upbitMarkets
+                .forEach(upbitMarket -> {
+                    String market = upbitMarket.getMarket();
+                    List<Double> cryptoClosePrices26 = upbitCandleService.getClosePricesByMarketAndTime(market, CandleAnalysisTime.MACD_TWENTY_SIX_TIME_STAMP.getTime());
+                    List<Double> cryptoClosePrices12 = upbitCandleService.getClosePricesByMarketAndTime(market, CandleAnalysisTime.MACD_TWELVE_TIME_STAMP.getTime());
+                    if (cryptoClosePrices26.size() < 26 || cryptoClosePrices12.size() < 12) {
+                        return;
+                    }
+                    Double macdValue = CandleAnalysisUtil.calculateMACD(cryptoClosePrices26, cryptoClosePrices12);
+                    List<Double> macdValues = upbitMacdService.findAllBySymbolAndTimeStamp(market, CandleAnalysisTime.MACD_NINE_TIME_STAMP.getTime());
+                    Double macdSignalValue = null;
+                    if (macdValues.size() >= 9) {
+                        macdSignalValue = CandleAnalysisUtil.calculateMACDSignal(macdValues);
+                    }
+                    upbitMacdService.save(market, macdValue, macdSignalValue);
                 });
-        Decision decision = decideByMacd(market);
-        UpbitOrderResponse trade = upbitCandleFetchService.trade(market, symbol, decision, listMono).block();
-        try {
-            Order order = trade.toOrder();
-            orderRepository.save(order);
-        } catch (Exception e) {
-            log.info("no trade");
-        }
+    }
 
-
+    private void volumeAnalyze(Flux<UpbitCandle> upbitCandlesFlux) {
+        upbitCandlesFlux
+                .flatMap(upbitCandle -> Mono.fromCallable(() -> upbitCandleService.getVolumesByMarketAndTime(upbitCandle.getMarket()))
+                        .subscribeOn(Schedulers.boundedElastic())
+                        .map(volumes -> CandleAnalysisUtil.isVolumeSpike(volumes, Double.parseDouble(upbitCandle.getVolume())))
+                        .filter(isSpike -> isSpike)
+                        .flatMap(isSpike -> telegramService.sendVolumeSpike()))
+                .subscribe();
     }
 
 
-    public Decision decideByMacd(String symbol) {
-        List<Double> cryptoClosePrices26 = upbitCandleService.getClosePricesBySymbolAndTime(symbol, CandleAnalysisTime.MACD_TWENTY_SIX_TIME_STAMP.getTime());
-        List<Double> cryptoClosePrices12 = upbitCandleService.getClosePricesBySymbolAndTime(symbol, CandleAnalysisTime.MACD_TWELVE_TIME_STAMP.getTime());
-        if (cryptoClosePrices26.size() != 0 && cryptoClosePrices12.size() != 0) {
-            double macd = candleAnalysisService.calculateMACD(cryptoClosePrices26, cryptoClosePrices12);
-            UpbitMacd save = upbitMacdService.save(symbol, macd);
-            List<Double> macdValues = upbitMacdService.findAllBySymbolAndTimeStamp(symbol, CandleAnalysisTime.MACD_NINE_TIME_STAMP.getTime());
-            double macdSignal = candleAnalysisService.calculateMACDSignal(macdValues);
-            upbitMacdService.signalSave(macdSignal, save);
-            boolean latestSignalIsHigherThanMacd = upbitMacdSignalService.findLatestSignalIsHigherThanMacd();
-            return candleAnalysisService.decideByMacd(macd, macdSignal, latestSignalIsHigherThanMacd);
-        }
-        return Decision.NOTHING;
+    public Decision decideByMacd(String market) {
+        UpbitMacd upbitMacd = upbitMacdService.findLatestMacd(market);
+        return CandleAnalysisUtil.decideByMacd(upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue(), upbitMacd.isSignalHigherThanMacd());
+    }
+
+    public Decision decideByRsi(String market) {
+        List<Double> cryptoClosePrices14 = upbitCandleService.getClosePricesByMarketAndTime(market, CandleAnalysisTime.RSI_FOURTEEN_TIME_STAMP.getTime());
+        return CandleAnalysisUtil.calculateRSI(cryptoClosePrices14);
     }
 
 
