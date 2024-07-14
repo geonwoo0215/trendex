@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,11 +31,15 @@ public class UpbitMacdService {
     }
 
     @Transactional(readOnly = true)
-    public UpbitMacd findLatestMacd(String market) {
-        return upbitMacdRepository.findLatestMacd(market)
-                .orElseThrow(() -> new RuntimeException);
+    public UpbitMacd findLatest(String market) {
+        return upbitMacdRepository.findLatest(market)
+                .orElseThrow(() -> new RuntimeException());
 
     }
 
+    @Transactional(readOnly = true)
+    public List<UpbitMacd> findLatest(List<String> markets) {
+        return upbitMacdRepository.findLatestForMarkets(markets);
+    }
 
 }

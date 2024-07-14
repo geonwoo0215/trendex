@@ -22,6 +22,16 @@ public interface UpbitMacdRepository extends JpaRepository<UpbitMacd, Long> {
             "FROM UpbitMacd um " +
             "WHERE um.market = :market " +
             "ORDER BY um.timestamp DESC")
-    Optional<UpbitMacd> findLatestMacd(@Param("market") String market);
+    Optional<UpbitMacd> findLatest(@Param("market") String market);
+
+    @Query("SELECT um " +
+            "FROM UpbitMacd um " +
+            "WHERE um.market " +
+            "IN :markets " +
+            "AND um.timestamp = (" +
+            "SELECT MAX(u.timestamp) " +
+            "FROM UpbitMacd u " +
+            "WHERE u.market = um.market)")
+    List<UpbitMacd> findLatestForMarkets(@Param("markets") List<String> markets);
 
 }

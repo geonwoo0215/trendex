@@ -2,12 +2,11 @@ package com.trendex.trendex.domain.candle.upbitcandle.facade;
 
 import com.trendex.trendex.domain.candle.CandleAnalysisTime;
 import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
-import com.trendex.trendex.domain.candle.Decision;
 import com.trendex.trendex.domain.candle.upbitcandle.model.UpbitCandle;
 import com.trendex.trendex.domain.candle.upbitcandle.service.UpbitCandleFetchService;
 import com.trendex.trendex.domain.candle.upbitcandle.service.UpbitCandleService;
-import com.trendex.trendex.domain.macd.upbitmacd.model.UpbitMacd;
 import com.trendex.trendex.domain.macd.upbitmacd.service.UpbitMacdService;
+import com.trendex.trendex.domain.rsi.upbitrsi.service.UpbitRsiService;
 import com.trendex.trendex.domain.symbol.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.domain.symbol.upbitmarket.service.UpbitMarketService;
 import com.trendex.trendex.global.client.webclient.service.TelegramService;
@@ -36,17 +35,19 @@ public class UpbitCandleFacade {
 
     private final TelegramService telegramService;
 
+    private final UpbitRsiService upbitRsiService;
+
     @Scheduled(cron = "0 */1 * * * *")
     public void fetchSaveAndAnalyzeUpbitData() {
         List<UpbitMarket> upbitMarkets = upbitMarketService.findAll();
         Flux<UpbitCandle> upbitCandlesFlux = upbitCandleFetchService.fetchUpbitData(upbitMarkets).share();
-        saveAll(upbitCandlesFlux)
-                .then(Mono.fromRunnable(() -> saveMacd(upbitMarkets)));
+        upbitCandleService.saveAll(upbitCandlesFlux)
+                .then(Mono.zip(
+                        Mono.fromRunnable(() -> saveRsi(upbitMarkets)),
+                        Mono.fromRunnable(() -> saveMacd(upbitMarkets))
+                ))
+                .subscribe();
         volumeAnalyze(upbitCandlesFlux);
-    }
-
-    private Flux<Void> saveAll(Flux<UpbitCandle> upbitCandlesFlux) {
-        return upbitCandleService.saveAll(upbitCandlesFlux);
     }
 
     public void saveMacd(List<UpbitMarket> upbitMarkets) {
@@ -68,6 +69,16 @@ public class UpbitCandleFacade {
                 });
     }
 
+    public void saveRsi(List<UpbitMarket> upbitMarkets) {
+        upbitMarkets
+                .forEach(upbitMarket -> {
+                    String market = upbitMarket.getMarket();
+                    List<Double> cryptoClosePrices14 = upbitCandleService.getClosePricesByMarketAndTime(market, CandleAnalysisTime.RSI_FOURTEEN_TIME_STAMP.getTime());
+                    Double rsiValue = CandleAnalysisUtil.calculateRSI(cryptoClosePrices14);
+                    upbitRsiService.save(market, rsiValue);
+                });
+    }
+
     private void volumeAnalyze(Flux<UpbitCandle> upbitCandlesFlux) {
         upbitCandlesFlux
                 .flatMap(upbitCandle -> Mono.fromCallable(() -> upbitCandleService.getVolumesByMarketAndTime(upbitCandle.getMarket()))
@@ -77,17 +88,5 @@ public class UpbitCandleFacade {
                         .flatMap(isSpike -> telegramService.sendVolumeSpike()))
                 .subscribe();
     }
-
-
-    public Decision decideByMacd(String market) {
-        UpbitMacd upbitMacd = upbitMacdService.findLatestMacd(market);
-        return CandleAnalysisUtil.decideByMacd(upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue(), upbitMacd.isSignalHigherThanMacd());
-    }
-
-    public Decision decideByRsi(String market) {
-        List<Double> cryptoClosePrices14 = upbitCandleService.getClosePricesByMarketAndTime(market, CandleAnalysisTime.RSI_FOURTEEN_TIME_STAMP.getTime());
-        return CandleAnalysisUtil.calculateRSI(cryptoClosePrices14);
-    }
-
 
 }

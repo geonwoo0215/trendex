@@ -17,9 +17,9 @@ public class CandleAnalysisUtil {
 
     private static final int MACD_NINE = 9;
 
-    public static Decision calculateRSI(List<Double> prices) {
+    public static Double calculateRSI(List<Double> prices) {
         if (prices == null || prices.size() <= RSI_PERIOD) {
-            return Decision.NOTHING;
+            return null;
         }
 
         double emaGain = 0;
@@ -61,15 +61,7 @@ public class CandleAnalysisUtil {
 
         double rs = emaGain / emaLoss;
         double rsi = 100 - (100 / (1 + rs));
-        log.info("rsi value {}", rsi);
-
-        if (rsi > 70) {
-            return Decision.SELL;
-        } else if (rsi < 30) {
-            return Decision.BUY;
-        }
-
-        return Decision.NOTHING;
+        return rsi;
     }
 
     public static boolean isVolumeSpike(List<Double> candleVolumes, double currentVolume) {
@@ -122,6 +114,18 @@ public class CandleAnalysisUtil {
                 return Decision.SELL;
             }
         }
+        return Decision.NOTHING;
+
+    }
+
+    public static Decision decideByRsi(double rsi) {
+
+        if (rsi > 70) {
+            return Decision.SELL;
+        } else if (rsi < 30) {
+            return Decision.BUY;
+        }
+
         return Decision.NOTHING;
 
     }
