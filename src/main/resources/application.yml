@@ -1,0 +1,6 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+    import:
+      - classpath:trendex-secrets/application-local.yml

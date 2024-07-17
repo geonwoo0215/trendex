@@ -1,10 +1,12 @@
 package com.trendex.trendex.global.client.webclient.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
+@Profile("!test")
 @RequiredArgsConstructor
 public class TelegramService {
 

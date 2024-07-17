@@ -7,6 +7,8 @@ import com.trendex.trendex.domain.rsi.upbitrsi.repository.UpbitRsiRepository;
 import com.trendex.trendex.domain.upbitmarket.fixture.UpbitMarketFixture;
 import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.domain.upbitmarket.repository.UpbitMarketRepository;
+import com.trendex.trendex.global.client.webclient.service.TelegramService;
+import com.trendex.trendex.global.client.webclient.service.TelegramWebClientService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +42,12 @@ class UpbitRsiControllerTest {
 
     @Autowired
     UpbitRsiRepository upbitRsiRepository;
+
+    @MockBean
+    TelegramWebClientService telegramWebClientService;
+
+    @MockBean
+    TelegramService telegramService;
 
     @Test
     @Transactional

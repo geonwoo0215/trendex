@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 
@@ -30,20 +29,6 @@ class UpbitRsiRepositoryTest {
 
     @Autowired
     UpbitRsiRepository upbitRsiRepository;
-
-    @Test
-    @Rollback(value = false)
-    void 더미데이터() {
-
-        List<String> markets = List.of("KRW-BTC", "KRW-ADA", "KRW-SOR");
-
-        Long latestTime = 5000L;
-
-        List<UpbitRsi> upbitRsis = UpbitRsiFixture.createUpbitRsis(markets, latestTime);
-
-        dataLoader.batchUpbitRsiInsert(upbitRsis);
-
-    }
 
     @Test
     void 거래_시장별로_가장_최근의_RSI_값_조회() {
