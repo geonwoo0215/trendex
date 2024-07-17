@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -16,7 +18,7 @@ public class UpbitRsiService {
 
     @Transactional
     public void save(String market, Double value) {
-        UpbitRsi upbitRsi = new UpbitRsi(market, value);
+        UpbitRsi upbitRsi = new UpbitRsi(market, value, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000);
         upbitRsiRepository.save(upbitRsi);
     }
 

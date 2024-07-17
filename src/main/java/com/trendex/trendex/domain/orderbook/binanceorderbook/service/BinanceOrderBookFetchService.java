@@ -1,7 +1,7 @@
 package com.trendex.trendex.domain.orderbook.binanceorderbook.service;
 
+import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.domain.orderbook.binanceorderbook.model.BinanceOrderBook;
-import com.trendex.trendex.domain.symbol.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.global.client.webclient.service.BinanceWebClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

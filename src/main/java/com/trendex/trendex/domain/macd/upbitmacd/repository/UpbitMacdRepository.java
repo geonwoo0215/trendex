@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UpbitMacdRepository extends JpaRepository<UpbitMacd, Long> {
 
@@ -15,23 +14,26 @@ public interface UpbitMacdRepository extends JpaRepository<UpbitMacd, Long> {
             "WHERE um.market = :market " +
             "AND um.timestamp >= :start  " +
             "ORDER BY um.timestamp ASC")
-    List<UpbitMacd> findMarketBySymbolAndTime(@Param("market") String market, @Param("start") long start);
+    List<UpbitMacd> findMacdByMarketAndTime(@Param("market") String market, @Param("start") long start);
 
+//    @Query("SELECT um " +
+//            "FROM UpbitMacd um " +
+//            "WHERE um.market " +
+//            "IN :markets " +
+//            "AND um.timestamp = (" +
+//            "SELECT MAX(u.timestamp) " +
+//            "FROM UpbitMacd u " +
+//            "WHERE u.market = um.market)")
+//    List<UpbitMacd> findLatestForMarkets(@Param("markets") List<String> markets);
 
-    @Query("SELECT um " +
-            "FROM UpbitMacd um " +
-            "WHERE um.market = :market " +
-            "ORDER BY um.timestamp DESC")
-    Optional<UpbitMacd> findLatest(@Param("market") String market);
-
-    @Query("SELECT um " +
-            "FROM UpbitMacd um " +
-            "WHERE um.market " +
-            "IN :markets " +
-            "AND um.timestamp = (" +
-            "SELECT MAX(u.timestamp) " +
-            "FROM UpbitMacd u " +
-            "WHERE u.market = um.market)")
+    @Query(value = "SELECT um1.id, um1.market, um1.macd_value, um1.macd_signal_value, um1.signal_higher_than_macd, um1.timestamp " +
+            "FROM upbit_macd um1 " +
+            "INNER JOIN ( " +
+            "    SELECT market, MAX(timestamp) AS max_timestamp " +
+            "    FROM upbit_macd um2 " +
+            "    WHERE market IN :markets " +
+            "    GROUP BY market " +
+            ") um2 ON um1.market = um2.market AND um1.timestamp = um2.max_timestamp",
+            nativeQuery = true)
     List<UpbitMacd> findLatestForMarkets(@Param("markets") List<String> markets);
-
 }

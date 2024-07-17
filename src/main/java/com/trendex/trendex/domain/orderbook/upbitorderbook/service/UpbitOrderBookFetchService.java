@@ -1,7 +1,7 @@
 package com.trendex.trendex.domain.orderbook.upbitorderbook.service;
 
 import com.trendex.trendex.domain.orderbook.upbitorderbook.model.UpbitOrderBook;
-import com.trendex.trendex.domain.symbol.upbitmarket.model.UpbitMarket;
+import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.global.client.webclient.service.UpbitWebClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

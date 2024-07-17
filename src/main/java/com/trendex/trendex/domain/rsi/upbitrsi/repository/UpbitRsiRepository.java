@@ -16,14 +16,15 @@ public interface UpbitRsiRepository extends JpaRepository<UpbitRsi, Long> {
             "ORDER BY ur.timestamp DESC")
     Optional<UpbitRsi> findLatest(@Param("market") String market);
 
-    @Query("SELECT ur " +
-            "FROM UpbitRsi ur " +
-            "WHERE ur.market " +
-            "IN :markets " +
-            "AND ur.timestamp = (" +
-            "SELECT MAX(u.timestamp) " +
-            "FROM UpbitRsi u " +
-            "WHERE u.market = ur.market)")
+    @Query(value = "SELECT ur1.id, ur1.value, ur1.market, ur1.timestamp " +
+            "FROM upbit_rsi ur1 " +
+            "INNER JOIN ( " +
+            "    SELECT market, MAX(timestamp) AS max_timestamp " +
+            "    FROM upbit_rsi " +
+            "    WHERE market IN :markets " +
+            "    GROUP BY market " +
+            ") ur2 ON ur1.market = ur2.market AND ur1.timestamp = ur2.max_timestamp",
+            nativeQuery = true)
     List<UpbitRsi> findLatestForMarkets(@Param("markets") List<String> markets);
 
 

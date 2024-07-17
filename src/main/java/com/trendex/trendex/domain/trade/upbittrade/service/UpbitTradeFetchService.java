@@ -1,7 +1,7 @@
 package com.trendex.trendex.domain.trade.upbittrade.service;
 
-import com.trendex.trendex.domain.symbol.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.domain.trade.upbittrade.model.UpbitTrade;
+import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitTradeResponse;
 import com.trendex.trendex.global.client.webclient.service.UpbitWebClientService;
 import lombok.RequiredArgsConstructor;

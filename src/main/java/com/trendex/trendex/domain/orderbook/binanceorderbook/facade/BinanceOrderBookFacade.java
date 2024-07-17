@@ -1,9 +1,9 @@
 package com.trendex.trendex.domain.orderbook.binanceorderbook.facade;
 
+import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
+import com.trendex.trendex.domain.binancesymbol.service.BinanceSymbolService;
 import com.trendex.trendex.domain.orderbook.binanceorderbook.service.BinanceOrderBookFetchService;
 import com.trendex.trendex.domain.orderbook.binanceorderbook.service.BinanceOrderBookService;
-import com.trendex.trendex.domain.symbol.binancesymbol.model.BinanceSymbol;
-import com.trendex.trendex.domain.symbol.binancesymbol.service.BinanceSymbolService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

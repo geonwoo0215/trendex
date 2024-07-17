@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -17,23 +19,16 @@ public class UpbitMacdService {
 
     @Transactional
     public void save(String market, Double macdValue, Double macdSignalValue) {
-        UpbitMacd upbitMacd = new UpbitMacd(market, macdValue, macdSignalValue);
+        UpbitMacd upbitMacd = new UpbitMacd(market, macdValue, macdSignalValue, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000);
         upbitMacdRepository.save(upbitMacd);
     }
 
     @Transactional(readOnly = true)
     public List<Double> findAllBySymbolAndTimeStamp(String symbol, long timestamp) {
-        return upbitMacdRepository.findMarketBySymbolAndTime(symbol, timestamp)
+        return upbitMacdRepository.findMacdByMarketAndTime(symbol, timestamp)
                 .stream()
                 .map(UpbitMacd::getMacdValue)
                 .toList();
-
-    }
-
-    @Transactional(readOnly = true)
-    public UpbitMacd findLatest(String market) {
-        return upbitMacdRepository.findLatest(market)
-                .orElseThrow(() -> new RuntimeException());
 
     }
 

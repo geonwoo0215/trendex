@@ -1,6 +1,6 @@
 package com.trendex.trendex.global.client.webclient.dto.binance;
 
-import com.trendex.trendex.domain.candle.binancecandle.model.BinanceCandle;
+import com.trendex.trendex.domain.binancecandle.model.BinanceCandle;
 import lombok.Getter;
 
 @Getter

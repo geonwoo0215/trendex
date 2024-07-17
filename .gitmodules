@@ -1,0 +1,4 @@
+[submodule "src/main/resources/trendex-secrets"]
+	path = src/main/resources/trendex-secrets
+	url = https://github.com/geonwoo0215/trendex-secrets.git
+    branch = main

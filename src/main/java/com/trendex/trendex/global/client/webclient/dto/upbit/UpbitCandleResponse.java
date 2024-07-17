@@ -1,7 +1,7 @@
 package com.trendex.trendex.global.client.webclient.dto.upbit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.trendex.trendex.domain.candle.upbitcandle.model.UpbitCandle;
+import com.trendex.trendex.domain.upbitcandle.model.UpbitCandle;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

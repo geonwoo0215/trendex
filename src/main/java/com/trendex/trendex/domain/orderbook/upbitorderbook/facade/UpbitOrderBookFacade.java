@@ -2,8 +2,8 @@ package com.trendex.trendex.domain.orderbook.upbitorderbook.facade;
 
 import com.trendex.trendex.domain.orderbook.upbitorderbook.service.UpbitOrderBookFetchService;
 import com.trendex.trendex.domain.orderbook.upbitorderbook.service.UpbitOrderBookService;
-import com.trendex.trendex.domain.symbol.upbitmarket.model.UpbitMarket;
-import com.trendex.trendex.domain.symbol.upbitmarket.service.UpbitMarketService;
+import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
+import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

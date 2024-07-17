@@ -8,9 +8,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,12 +27,12 @@ public class UpbitMacd {
 
     private Long timestamp;
 
-    public UpbitMacd(String market, Double macdValue, Double macdSignalValue) {
+    public UpbitMacd(String market, Double macdValue, Double macdSignalValue, Long timestamp) {
         this.market = market;
         this.macdValue = macdValue;
         this.macdSignalValue = macdSignalValue;
         this.signalHigherThanMacd = macdSignalValue > macdValue;
-        this.timestamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000;
+        this.timestamp = timestamp;
     }
 
 }

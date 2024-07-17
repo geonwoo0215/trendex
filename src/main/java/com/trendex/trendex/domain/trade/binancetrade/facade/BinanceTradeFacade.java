@@ -1,7 +1,7 @@
 package com.trendex.trendex.domain.trade.binancetrade.facade;
 
-import com.trendex.trendex.domain.symbol.binancesymbol.model.BinanceSymbol;
-import com.trendex.trendex.domain.symbol.binancesymbol.service.BinanceSymbolService;
+import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
+import com.trendex.trendex.domain.binancesymbol.service.BinanceSymbolService;
 import com.trendex.trendex.domain.trade.binancetrade.service.BinanceTradeFetchService;
 import com.trendex.trendex.domain.trade.binancetrade.service.BinanceTradeService;
 import lombok.RequiredArgsConstructor;

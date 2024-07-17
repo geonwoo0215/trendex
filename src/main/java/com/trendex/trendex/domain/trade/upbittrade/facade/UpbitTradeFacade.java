@@ -1,9 +1,9 @@
 package com.trendex.trendex.domain.trade.upbittrade.facade;
 
-import com.trendex.trendex.domain.symbol.upbitmarket.model.UpbitMarket;
-import com.trendex.trendex.domain.symbol.upbitmarket.service.UpbitMarketService;
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeFetchService;
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeService;
+import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
+import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
