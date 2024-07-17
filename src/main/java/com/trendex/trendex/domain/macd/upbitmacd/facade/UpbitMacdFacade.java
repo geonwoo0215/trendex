@@ -2,7 +2,7 @@ package com.trendex.trendex.domain.macd.upbitmacd.facade;
 
 import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
 import com.trendex.trendex.domain.candle.Decision;
-import com.trendex.trendex.domain.macd.upbitmacd.dto.UpbitMacdResponse;
+import com.trendex.trendex.domain.macd.dto.MacdResponse;
 import com.trendex.trendex.domain.macd.upbitmacd.model.UpbitMacd;
 import com.trendex.trendex.domain.macd.upbitmacd.service.UpbitMacdService;
 import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
@@ -23,7 +23,7 @@ public class UpbitMacdFacade {
 
     private final UpbitMacdService upbitMacdService;
 
-    public List<UpbitMacdResponse> findAllMacds() {
+    public List<MacdResponse> findAllMacds() {
         List<String> upbitMarkets = upbitMarketService.findAll()
                 .stream()
                 .map(UpbitMarket::getMarket)
@@ -33,7 +33,7 @@ public class UpbitMacdFacade {
                 .stream()
                 .map(upbitMacd -> {
                     Decision decision = decideByMacd(upbitMacd);
-                    return new UpbitMacdResponse(upbitMacd.getMarket(), decision.getText(), upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue());
+                    return new MacdResponse(upbitMacd.getMarket(), decision.getText(), upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue());
                 })
                 .collect(Collectors.toList());
     }

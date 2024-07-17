@@ -1,11 +1,11 @@
-package com.trendex.trendex.domain.rsi.upbitrsi.dto;
+package com.trendex.trendex.domain.rsi.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Schema(description = "Rsi DTO")
 @Getter
-public class UpbitRsiResponse {
+public class RsiResponse {
 
     @Schema(description = "거래 시장")
     private String market;
@@ -16,7 +16,7 @@ public class UpbitRsiResponse {
     @Schema(description = "Rsi 값")
     private Double value;
 
-    public UpbitRsiResponse(String market, String decision, Double value) {
+    public RsiResponse(String market, String decision, Double value) {
         this.market = market;
         this.decision = decision;
         this.value = value;

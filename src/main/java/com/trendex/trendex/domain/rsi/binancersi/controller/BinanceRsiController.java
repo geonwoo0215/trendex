@@ -1,7 +1,7 @@
-package com.trendex.trendex.domain.rsi.upbitrsi.controller;
+package com.trendex.trendex.domain.rsi.binancersi.controller;
 
+import com.trendex.trendex.domain.rsi.binancersi.facade.BinanceRsiFacade;
 import com.trendex.trendex.domain.rsi.dto.RsiResponse;
-import com.trendex.trendex.domain.rsi.upbitrsi.facade.UpbitRsiFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "업비트 rsi", description = "업비트 rsi api")
+@Tag(name = "바이낸스 rsi", description = "바이낸스 rsi api")
 @RestController
 @RequiredArgsConstructor
-public class UpbitRsiController {
+public class BinanceRsiController {
 
-    private final UpbitRsiFacade upbitRsiFacade;
+    private final BinanceRsiFacade binanceRsiFacade;
 
     @Operation(
             summary = "업비트 rsi 조회 api",
@@ -33,9 +33,9 @@ public class UpbitRsiController {
                     )
             }
     )
-    @GetMapping(value = "/upbit-rsis", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/binance-rsis", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RsiResponse>> findAll() {
-        List<RsiResponse> response = upbitRsiFacade.findAllRsis();
+        List<RsiResponse> response = binanceRsiFacade.findAllRsis();
         return ResponseEntity.ok(response);
     }
 

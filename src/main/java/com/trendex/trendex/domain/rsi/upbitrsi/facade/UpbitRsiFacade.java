@@ -2,7 +2,7 @@ package com.trendex.trendex.domain.rsi.upbitrsi.facade;
 
 import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
 import com.trendex.trendex.domain.candle.Decision;
-import com.trendex.trendex.domain.rsi.upbitrsi.dto.UpbitRsiResponse;
+import com.trendex.trendex.domain.rsi.dto.RsiResponse;
 import com.trendex.trendex.domain.rsi.upbitrsi.model.UpbitRsi;
 import com.trendex.trendex.domain.rsi.upbitrsi.service.UpbitRsiService;
 import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
@@ -23,7 +23,7 @@ public class UpbitRsiFacade {
 
     private final UpbitRsiService upbitRsiService;
 
-    public List<UpbitRsiResponse> findAllRsis() {
+    public List<RsiResponse> findAllRsis() {
         List<String> upbitMarkets = upbitMarketService.findAll()
                 .stream()
                 .map(UpbitMarket::getMarket)
@@ -33,7 +33,7 @@ public class UpbitRsiFacade {
                 .stream()
                 .map(upbitRsi -> {
                     Decision decision = decideByRsi(upbitRsi);
-                    return new UpbitRsiResponse(upbitRsi.getMarket(), decision.getText(), upbitRsi.getValue());
+                    return new RsiResponse(upbitRsi.getMarket(), decision.getText(), upbitRsi.getValue());
                 })
                 .collect(Collectors.toList());
     }

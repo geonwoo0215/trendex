@@ -14,7 +14,7 @@ public class BinanceCandleFixture {
     private static final String openPrice = "40000.00";
     private static final String highPrice = "40500.00";
     private static final String lowPrice = "39500.00";
-    private static final String closePrice = "40200.00";
+    private static final Double closePrice = 40200.00;
     private static final String volume = "1500.123";
     private static final long klineCloseTime = LocalDateTime.now().minusMinutes(2L).toEpochSecond(ZoneOffset.UTC) * 1000;
     private static final String quoteAssetVolume = "60000000.00";

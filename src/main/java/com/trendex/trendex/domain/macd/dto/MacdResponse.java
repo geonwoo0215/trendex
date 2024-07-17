@@ -1,11 +1,11 @@
-package com.trendex.trendex.domain.macd.upbitmacd.dto;
+package com.trendex.trendex.domain.macd.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Schema(description = "Macd DTO")
 @Getter
-public class UpbitMacdResponse {
+public class MacdResponse {
 
     @Schema(description = "거래 시장")
     private String market;
@@ -19,7 +19,7 @@ public class UpbitMacdResponse {
     @Schema(description = "MACD 신호선 값")
     private Double macdSignalValue;
 
-    public UpbitMacdResponse(String market, String decision, Double macdValue, Double macdSignalValue) {
+    public MacdResponse(String market, String decision, Double macdValue, Double macdSignalValue) {
         this.market = market;
         this.decision = decision;
         this.macdValue = macdValue;

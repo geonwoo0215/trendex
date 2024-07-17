@@ -43,6 +43,6 @@ public class BinanceCandleResponse {
     }
 
     public BinanceCandle toBinanceCandle(String symbol) {
-        return new BinanceCandle(symbol, klineOpenTime, openPrice, highPrice, lowPrice, closePrice, volume, klineCloseTime, quoteAssetVolume, numberOfTrades, takerBuyBaseAssetVolume, takerBuyQuoteAssetVolume);
+        return new BinanceCandle(symbol, klineOpenTime, openPrice, highPrice, lowPrice, Double.parseDouble(closePrice), volume, klineCloseTime, quoteAssetVolume, numberOfTrades, takerBuyBaseAssetVolume, takerBuyQuoteAssetVolume);
     }
 }

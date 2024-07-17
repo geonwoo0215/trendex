@@ -1,7 +1,7 @@
-package com.trendex.trendex.domain.macd.upbitmacd.controller;
+package com.trendex.trendex.domain.macd.binancemacd.controller;
 
+import com.trendex.trendex.domain.macd.binancemacd.facade.BinanceMacdFacade;
 import com.trendex.trendex.domain.macd.dto.MacdResponse;
-import com.trendex.trendex.domain.macd.upbitmacd.facade.UpbitMacdFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,9 +18,9 @@ import java.util.List;
 @Tag(name = "macd", description = "macd 조회 api")
 @RestController
 @RequiredArgsConstructor
-public class UpbitMacdController {
+public class BinanceMacdController {
 
-    private final UpbitMacdFacade upbitMacdFacade;
+    private final BinanceMacdFacade binanceMacdFacade;
 
     @Operation(
             summary = "macd 조회 api",
@@ -35,7 +35,7 @@ public class UpbitMacdController {
     )
     @GetMapping(value = "/macds", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MacdResponse>> findAll() {
-        List<MacdResponse> response = upbitMacdFacade.findAllMacds();
+        List<MacdResponse> response = binanceMacdFacade.findAllMacds();
         return ResponseEntity.ok(response);
     }
 

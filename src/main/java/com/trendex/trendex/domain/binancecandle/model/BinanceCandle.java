@@ -27,7 +27,7 @@ public class BinanceCandle {
 
     private String lowPrice;
 
-    private String closePrice;
+    private Double closePrice;
 
     private String volume;
 
@@ -41,7 +41,7 @@ public class BinanceCandle {
 
     private String takerBuyQuoteAssetVolume;
 
-    public BinanceCandle(String symbol, long klineOpenTime, String openPrice, String highPrice, String lowPrice, String closePrice, String volume, long klineCloseTime, String quoteAssetVolume, int numberOfTrades, String takerBuyBaseAssetVolume, String takerBuyQuoteAssetVolume) {
+    public BinanceCandle(String symbol, long klineOpenTime, String openPrice, String highPrice, String lowPrice, Double closePrice, String volume, long klineCloseTime, String quoteAssetVolume, int numberOfTrades, String takerBuyBaseAssetVolume, String takerBuyQuoteAssetVolume) {
         this.symbol = symbol;
         this.klineOpenTime = klineOpenTime;
         this.openPrice = openPrice;

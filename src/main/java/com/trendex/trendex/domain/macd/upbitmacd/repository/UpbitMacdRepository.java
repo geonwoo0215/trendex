@@ -30,7 +30,7 @@ public interface UpbitMacdRepository extends JpaRepository<UpbitMacd, Long> {
             "FROM upbit_macd um1 " +
             "INNER JOIN ( " +
             "    SELECT market, MAX(timestamp) AS max_timestamp " +
-            "    FROM upbit_macd um2 " +
+            "    FROM upbit_macd " +
             "    WHERE market IN :markets " +
             "    GROUP BY market " +
             ") um2 ON um1.market = um2.market AND um1.timestamp = um2.max_timestamp",
