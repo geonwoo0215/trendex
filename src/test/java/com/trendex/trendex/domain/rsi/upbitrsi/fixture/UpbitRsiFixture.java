@@ -10,8 +10,6 @@ public class UpbitRsiFixture {
 
     private static final Double VOLUME = 0.0;
 
-    private static final Long TIME_STAMP = 0L;
-
     public static UpbitRsi createUpbitRsi(String market, Long timestamp) {
 
         return new UpbitRsi(market, VOLUME, timestamp);

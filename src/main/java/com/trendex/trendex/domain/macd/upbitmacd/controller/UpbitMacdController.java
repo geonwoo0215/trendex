@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "macd", description = "macd 조회 api")
+@Tag(name = "업비트-macd", description = "업비트 macd 조회 api")
 @RestController
 @RequiredArgsConstructor
 public class UpbitMacdController {
@@ -33,7 +33,7 @@ public class UpbitMacdController {
                     )
             }
     )
-    @GetMapping(value = "/macds", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/macds/upbit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MacdResponse>> findAll() {
         List<MacdResponse> response = upbitMacdFacade.findAllMacds();
         return ResponseEntity.ok(response);

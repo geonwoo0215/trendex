@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "macd", description = "macd 조회 api")
+@Tag(name = "바이낸스-macd", description = "바이낸스 macd 조회 api")
 @RestController
 @RequiredArgsConstructor
 public class BinanceMacdController {
@@ -33,7 +33,7 @@ public class BinanceMacdController {
                     )
             }
     )
-    @GetMapping(value = "/macds", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/macds/binance", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MacdResponse>> findAll() {
         List<MacdResponse> response = binanceMacdFacade.findAllMacds();
         return ResponseEntity.ok(response);

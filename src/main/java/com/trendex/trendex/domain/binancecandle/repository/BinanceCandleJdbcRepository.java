@@ -33,7 +33,7 @@ public class BinanceCandleJdbcRepository {
                 ps.setString(3, candle.getOpenPrice());
                 ps.setString(4, candle.getHighPrice());
                 ps.setString(5, candle.getLowPrice());
-                ps.setString(6, candle.getClosePrice());
+                ps.setDouble(6, candle.getClosePrice());
                 ps.setString(7, candle.getVolume());
                 ps.setLong(8, candle.getKlineCloseTime());
                 ps.setString(9, candle.getQuoteAssetVolume());

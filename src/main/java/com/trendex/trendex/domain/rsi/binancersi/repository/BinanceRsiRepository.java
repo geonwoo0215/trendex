@@ -16,12 +16,12 @@ public interface BinanceRsiRepository extends JpaRepository<BinanceRsi, Long> {
             "ORDER BY br.timestamp DESC")
     Optional<BinanceRsi> findLatest(@Param("symbol") String symbol);
 
-    @Query(value = "SELECT br1.id, br1.value, br1.market, br1.timestamp " +
+    @Query(value = "SELECT br1.id, br1.value, br1.symbol, br1.timestamp " +
             "FROM binance_rsi br1 " +
             "INNER JOIN ( " +
             "    SELECT symbol, MAX(timestamp) AS max_timestamp " +
             "    FROM binance_rsi " +
-            "    WHERE symbol IN :markets " +
+            "    WHERE symbol IN :symbols " +
             "    GROUP BY symbol " +
             ") br2 ON br1.symbol = br2.symbol AND br1.timestamp = br2.max_timestamp",
             nativeQuery = true)

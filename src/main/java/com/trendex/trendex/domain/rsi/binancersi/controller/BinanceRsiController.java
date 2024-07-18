@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "바이낸스 rsi", description = "바이낸스 rsi api")
+@Tag(name = "바이낸스 rsi", description = "바이낸스 rsi 조회 api")
 @RestController
 @RequiredArgsConstructor
 public class BinanceRsiController {
@@ -33,7 +33,7 @@ public class BinanceRsiController {
                     )
             }
     )
-    @GetMapping(value = "/binance-rsis", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/rsis/binance", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RsiResponse>> findAll() {
         List<RsiResponse> response = binanceRsiFacade.findAllRsis();
         return ResponseEntity.ok(response);

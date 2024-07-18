@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "업비트 rsi", description = "업비트 rsi api")
+@Tag(name = "업비트 rsi", description = "업비트 rsi 조회 api")
 @RestController
 @RequiredArgsConstructor
 public class UpbitRsiController {
@@ -33,7 +33,7 @@ public class UpbitRsiController {
                     )
             }
     )
-    @GetMapping(value = "/upbit-rsis", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/rsis/upbit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RsiResponse>> findAll() {
         List<RsiResponse> response = upbitRsiFacade.findAllRsis();
         return ResponseEntity.ok(response);

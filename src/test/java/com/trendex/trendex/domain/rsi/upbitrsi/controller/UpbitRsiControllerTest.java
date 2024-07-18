@@ -62,7 +62,7 @@ class UpbitRsiControllerTest {
         List<UpbitRsi> upbitRsis = UpbitRsiFixture.createUpbitRsis(markets, latestTime);
         upbitRsiRepository.saveAll(upbitRsis);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/rsis")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/rsis/upbit")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].market", Matchers.everyItem(Matchers.isA(String.class))))
