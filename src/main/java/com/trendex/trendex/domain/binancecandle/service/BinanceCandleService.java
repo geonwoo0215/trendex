@@ -6,6 +6,7 @@ import com.trendex.trendex.domain.binancecandle.repository.BinanceCandleReposito
 import com.trendex.trendex.domain.candle.CandleAnalysisTime;
 import com.trendex.trendex.domain.candle.CryptoClosePrice;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -16,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class BinanceCandleService {
 
@@ -39,11 +41,8 @@ public class BinanceCandleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Double> getClosePricesBySymbolAndTime(String market, long timestamp) {
-        return binanceCandleRepository.findTradePriceBySymbolAndTime(market, timestamp)
-                .stream()
-                .map(CryptoClosePrice::getTradePrice)
-                .collect(Collectors.toList());
+    public List<CryptoClosePrice> getClosePricesBySymbolAndTime(String symbol, long timestamp) {
+        return binanceCandleRepository.findTradePriceBySymbolAndTime(symbol, timestamp);
     }
 
 }

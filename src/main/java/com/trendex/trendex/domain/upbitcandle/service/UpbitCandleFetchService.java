@@ -28,7 +28,7 @@ public class UpbitCandleFetchService {
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(upbitSymbol ->
-                        upbitWebClientService.getMinuteCandle(1, upbitSymbol.getMarket(), 200)
+                        upbitWebClientService.getMinuteCandle(1, upbitSymbol.getMarket(), 1)
                                 .flatMapMany(Flux::fromIterable)
                                 .map(UpbitCandleResponse::toUpbitCandle)
                 )

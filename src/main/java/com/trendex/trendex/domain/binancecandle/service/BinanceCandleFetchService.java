@@ -23,7 +23,7 @@ public class BinanceCandleFetchService {
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(binanceSymbol ->
-                        binanceWebClientService.getCandle(binanceSymbol.getSymbol(), "3m", 20)
+                        binanceWebClientService.getCandle(binanceSymbol.getSymbol(), "1m", 1)
                                 .flatMapMany(Flux::fromIterable)
                                 .map(binanceCandle -> mapToBinanceCandle(binanceCandle).toBinanceCandle(binanceSymbol.getSymbol()))
                 )

@@ -1,6 +1,7 @@
 package com.trendex.trendex.domain.macd.binancemacd.service;
 
 import com.trendex.trendex.domain.macd.binancemacd.model.BinanceMacd;
+import com.trendex.trendex.domain.macd.binancemacd.repository.BinanceMacdJdbcRepository;
 import com.trendex.trendex.domain.macd.binancemacd.repository.BinanceMacdRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import java.util.List;
 public class BinanceMacdService {
 
     private final BinanceMacdRepository binanceMacdRepository;
+
+    private final BinanceMacdJdbcRepository binanceMacdJdbcRepository;
 
     @Transactional
     public void save(String market, Double macdValue, Double macdSignalValue) {
@@ -34,6 +37,11 @@ public class BinanceMacdService {
     @Transactional(readOnly = true)
     public List<BinanceMacd> findLatest(List<String> markets) {
         return binanceMacdRepository.findLatestForSymbol(markets);
+    }
+
+    @Transactional
+    public void saveAll(List<BinanceMacd> binanceMacds) {
+        binanceMacdJdbcRepository.batchInsert(binanceMacds);
     }
 
 }

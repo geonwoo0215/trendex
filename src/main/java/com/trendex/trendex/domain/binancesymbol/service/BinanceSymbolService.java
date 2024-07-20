@@ -22,8 +22,13 @@ public class BinanceSymbolService {
         return binanceSymbolRepository.findAll();
     }
 
+//    @Transactional
+//    public void saveAll(List<BinanceSymbol> binanceSymbols) {
+//        binanceJdbcRepository.batchInsert(binanceSymbols);
+//    }
+
     @Transactional
     public void saveAll(List<BinanceSymbol> binanceSymbols) {
-        binanceJdbcRepository.batchInsert(binanceSymbols);
+        binanceSymbolRepository.saveAll(binanceSymbols);
     }
 }

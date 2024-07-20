@@ -24,6 +24,6 @@ public class UpbitMarketService {
 
     @Transactional
     public void saveAll(List<UpbitMarket> upbitSymbols) {
-        upbitMarketJdbcRepository.batchInsert(upbitSymbols);
+        upbitMarketRepository.saveAll(upbitSymbols);
     }
 }

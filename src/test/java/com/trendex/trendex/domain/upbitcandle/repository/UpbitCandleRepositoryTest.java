@@ -63,10 +63,10 @@ class UpbitCandleRepositoryTest {
         upbitCandleRepository.save(upbitCandle1);
         upbitCandleRepository.save(upbitCandle2);
 
-        List<CryptoClosePrice> cryptoClosePrices = upbitCandleRepository.findTradePriceByMarketAndTime(btcMarket, startTime);
+        List<CryptoClosePrice> cryptoClosePrices = upbitCandleRepository.findClosePriceByMarketAndTime(btcMarket, startTime);
 
         cryptoClosePrices
-                .forEach(cryptoClosePrice -> Assertions.assertThat(cryptoClosePrice.getTradePrice()).isEqualTo(tradePrice));
+                .forEach(cryptoClosePrice -> Assertions.assertThat(cryptoClosePrice.getClosePrice()).isEqualTo(tradePrice));
 
         Assertions.assertThat(cryptoClosePrices).hasSize(1);
 

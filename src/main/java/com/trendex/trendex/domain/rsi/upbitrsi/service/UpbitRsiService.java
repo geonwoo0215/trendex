@@ -1,6 +1,7 @@
 package com.trendex.trendex.domain.rsi.upbitrsi.service;
 
 import com.trendex.trendex.domain.rsi.upbitrsi.model.UpbitRsi;
+import com.trendex.trendex.domain.rsi.upbitrsi.repository.UpbitRsiJdbcRepository;
 import com.trendex.trendex.domain.rsi.upbitrsi.repository.UpbitRsiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import java.util.List;
 public class UpbitRsiService {
 
     private final UpbitRsiRepository upbitRsiRepository;
+
+    private final UpbitRsiJdbcRepository upbitRsiJdbcRepository;
 
     @Transactional
     public void save(String market, Double value) {
@@ -32,6 +35,11 @@ public class UpbitRsiService {
     @Transactional(readOnly = true)
     public List<UpbitRsi> findLatest(List<String> markets) {
         return upbitRsiRepository.findLatestForMarkets(markets);
+    }
+
+    @Transactional
+    public void saveAll(List<UpbitRsi> upbitRsis) {
+        upbitRsiJdbcRepository.batchInsert(upbitRsis);
     }
 
 

@@ -18,12 +18,7 @@ public class CandleAnalysisUtil {
     private static final int MACD_NINE = 9;
 
     public static Double calculateRSI(List<Double> prices) {
-        if (prices == null || prices.size() <= RSI_PERIOD) {
-            return null;
-        }
-
-        double emaGain = 0;
-        double emaLoss = 0;
+        
         double prevPrice = prices.get(0);
         double initialGain = 0;
         double initialLoss = 0;
@@ -44,8 +39,8 @@ public class CandleAnalysisUtil {
 
         double avgGain = initialGain / RSI_PERIOD;
         double avgLoss = initialLoss / RSI_PERIOD;
-        emaGain = avgGain;
-        emaLoss = avgLoss;
+        double emaGain = avgGain;
+        double emaLoss = avgLoss;
 
         for (int i = RSI_PERIOD + 1; i < prices.size(); i++) {
             double price = prices.get(i);
@@ -57,6 +52,10 @@ public class CandleAnalysisUtil {
 
             emaGain = (gain * multiplier) + (emaGain * (1 - multiplier));
             emaLoss = (loss * multiplier) + (emaLoss * (1 - multiplier));
+        }
+
+        if (emaLoss == 0) {
+            return 100.0;
         }
 
         double rs = emaGain / emaLoss;

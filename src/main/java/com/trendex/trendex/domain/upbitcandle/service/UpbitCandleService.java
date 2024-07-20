@@ -40,9 +40,9 @@ public class UpbitCandleService {
 
     @Transactional(readOnly = true)
     public List<Double> getClosePricesByMarketAndTime(String market, long timestamp) {
-        return upbitCandleRepository.findTradePriceByMarketAndTime(market, timestamp)
+        return upbitCandleRepository.findClosePriceByMarketAndTime(market, timestamp)
                 .stream()
-                .map(CryptoClosePrice::getTradePrice)
+                .map(CryptoClosePrice::getClosePrice)
                 .collect(Collectors.toList());
     }
 

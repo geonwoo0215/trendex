@@ -8,9 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CryptoClosePrice {
 
-    private Double tradePrice;
+    private Double closePrice;
 
-    public CryptoClosePrice(Double tradePrice) {
-        this.tradePrice = tradePrice;
+    private Long timeStamp;
+
+    public CryptoClosePrice(Double closePrice, Long timeStamp) {
+        this.closePrice = closePrice;
+        this.timeStamp = timeStamp;
     }
 }

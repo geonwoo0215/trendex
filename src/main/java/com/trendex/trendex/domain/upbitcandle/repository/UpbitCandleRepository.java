@@ -17,12 +17,12 @@ public interface UpbitCandleRepository extends JpaRepository<UpbitCandle, Long> 
             "ORDER BY u.timestamp ASC")
     List<CryptoVolume> findVolumeByMarketAndTimeRange(@Param("market") String market, @Param("start") long startDateTime, @Param("end") long endDateTime);
 
-    @Query("SELECT new com.trendex.trendex.domain.candle.CryptoClosePrice(u.tradePrice) " +
+    @Query("SELECT new com.trendex.trendex.domain.candle.CryptoClosePrice(u.closePrice,u.timestamp) " +
             "FROM UpbitCandle u " +
             "WHERE u.market = :market " +
             "AND u.timestamp >= :start " +
             "ORDER BY u.timestamp ASC")
-    List<CryptoClosePrice> findTradePriceByMarketAndTime(@Param("market") String market, @Param("start") long start);
+    List<CryptoClosePrice> findClosePriceByMarketAndTime(@Param("market") String market, @Param("start") long start);
 
 
 }

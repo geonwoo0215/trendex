@@ -1,16 +1,18 @@
 package com.trendex.trendex.domain.macd.binancemacd.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        indexes = @Index(name = "idx_binance_macd_symbol_timestamp", columnList = "symbol, timestamp")
+)
 public class BinanceMacd {
 
     @Id
@@ -23,7 +25,7 @@ public class BinanceMacd {
 
     private Double macdSignalValue;
 
-    private boolean signalHigherThanMacd;
+    private Boolean signalHigherThanMacd;
 
     private Long timestamp;
 
@@ -31,7 +33,7 @@ public class BinanceMacd {
         this.symbol = symbol;
         this.macdValue = macdValue;
         this.macdSignalValue = macdSignalValue;
-        this.signalHigherThanMacd = macdSignalValue > macdValue;
+        this.signalHigherThanMacd = Objects.isNull(macdSignalValue) ? null : macdSignalValue > macdValue;
         this.timestamp = timestamp;
     }
 

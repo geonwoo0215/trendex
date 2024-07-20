@@ -39,7 +39,7 @@ public class BinanceMacdFacade {
     }
 
     public Decision decideByMacd(BinanceMacd binanceMacd) {
-        return CandleAnalysisUtil.decideByMacd(binanceMacd.getMacdValue(), binanceMacd.getMacdSignalValue(), binanceMacd.isSignalHigherThanMacd());
+        return CandleAnalysisUtil.decideByMacd(binanceMacd.getMacdValue(), binanceMacd.getMacdSignalValue(), binanceMacd.getSignalHigherThanMacd());
     }
 
 }

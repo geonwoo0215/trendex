@@ -1,9 +1,6 @@
 package com.trendex.trendex.domain.binancecandle.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +8,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(
+        indexes = @Index(name = "idx_binance_candle_market_timestamp", columnList = "symbol, timestamp")
+)
 public class BinanceCandle {
 
     @Id

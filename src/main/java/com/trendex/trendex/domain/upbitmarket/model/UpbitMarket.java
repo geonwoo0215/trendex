@@ -1,8 +1,6 @@
 package com.trendex.trendex.domain.upbitmarket.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,9 +12,6 @@ import lombok.NoArgsConstructor;
 public class UpbitMarket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String market;
 
     public UpbitMarket(String market) {

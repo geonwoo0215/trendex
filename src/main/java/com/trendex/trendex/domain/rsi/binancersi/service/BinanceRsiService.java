@@ -1,6 +1,7 @@
 package com.trendex.trendex.domain.rsi.binancersi.service;
 
 import com.trendex.trendex.domain.rsi.binancersi.model.BinanceRsi;
+import com.trendex.trendex.domain.rsi.binancersi.repository.BinanceRsiJdbcRepository;
 import com.trendex.trendex.domain.rsi.binancersi.repository.BinanceRsiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ public class BinanceRsiService {
 
     private final BinanceRsiRepository binanceRsiRepository;
 
+    private final BinanceRsiJdbcRepository binanceRsiJdbcRepository;
+
     @Transactional
     public void save(String symbol, Double value) {
         BinanceRsi binanceRsi = new BinanceRsi(symbol, value, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000);
@@ -26,5 +29,10 @@ public class BinanceRsiService {
     @Transactional(readOnly = true)
     public List<BinanceRsi> findLatest(List<String> markets) {
         return binanceRsiRepository.findLatestForSymbols(markets);
+    }
+
+    @Transactional
+    public void saveAll(List<BinanceRsi> binanceRsis) {
+        binanceRsiJdbcRepository.batchInsert(binanceRsis);
     }
 }

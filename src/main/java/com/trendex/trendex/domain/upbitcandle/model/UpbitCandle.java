@@ -31,7 +31,7 @@ public class UpbitCandle {
 
     private double lowPrice;
 
-    private double tradePrice;
+    private double closePrice;
 
     private long timestamp;
 
@@ -48,7 +48,7 @@ public class UpbitCandle {
         this.openingPrice = openingPrice;
         this.highPrice = highPrice;
         this.lowPrice = lowPrice;
-        this.tradePrice = tradePrice;
+        this.closePrice = tradePrice;
         this.timestamp = timestamp;
         this.candleAccTradePrice = candleAccTradePrice;
         this.volume = candleAccTradeVolume;
