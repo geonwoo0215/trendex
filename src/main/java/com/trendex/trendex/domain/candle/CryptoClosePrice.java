@@ -16,4 +16,6 @@ public class CryptoClosePrice {
         this.closePrice = closePrice;
         this.timeStamp = timeStamp;
     }
+
+
 }

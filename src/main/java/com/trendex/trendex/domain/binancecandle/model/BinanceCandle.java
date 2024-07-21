@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(
-        indexes = @Index(name = "idx_binance_candle_market_timestamp", columnList = "symbol, timestamp")
+        indexes = @Index(name = "idx_binance_candle_market_klineCloseTime", columnList = "symbol, klineCloseTime")
 )
 public class BinanceCandle {
 
