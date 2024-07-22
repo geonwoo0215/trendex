@@ -47,9 +47,9 @@ public class UpbitCandleFacade {
     @Scheduled(fixedRate = 60000000)
     public void fetchSaveAndAnalyzeUpbitData() {
 
-        List<UpbitMarket> upbitMarkets = upbitMarketService.findAll();
+        List<UpbitMarket> upbitMarkets = upbitMarketService.findMarketsStartWithKRW();
+        Flux<UpbitCandle> upbitCandlesFlux = upbitCandleFetchService.fetchUpbitData(upbitMarkets);
 
-        Flux<UpbitCandle> upbitCandlesFlux = upbitCandleFetchService.fetchUpbitData(upbitMarkets).share();
         upbitCandleService.saveAll(upbitCandlesFlux)
                 .then(Mono.zip(
                         Mono.fromRunnable(() -> saveRsi(upbitMarkets))
@@ -58,7 +58,6 @@ public class UpbitCandleFacade {
                                 .subscribeOn(Schedulers.boundedElastic())
                 ))
                 .subscribe();
-//        volumeAnalyze(upbitCandlesFlux);
     }
 
     public void saveMacd(List<UpbitMarket> upbitMarkets) {
@@ -85,7 +84,6 @@ public class UpbitCandleFacade {
     }
 
     public void saveRsi(List<UpbitMarket> upbitMarkets) {
-
         List<UpbitRsi> upbitRsis = upbitMarkets
                 .parallelStream()
                 .map(upbitMarket -> {

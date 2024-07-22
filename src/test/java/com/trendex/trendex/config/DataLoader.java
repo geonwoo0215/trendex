@@ -36,7 +36,7 @@ public class DataLoader {
                 ps.setDouble(4, candle.getOpeningPrice());
                 ps.setDouble(5, candle.getHighPrice());
                 ps.setDouble(6, candle.getLowPrice());
-                ps.setDouble(7, candle.getTradePrice());
+                ps.setDouble(7, candle.getClosePrice());
                 ps.setLong(8, candle.getTimestamp());
                 ps.setDouble(9, candle.getCandleAccTradePrice());
                 ps.setString(10, candle.getVolume());

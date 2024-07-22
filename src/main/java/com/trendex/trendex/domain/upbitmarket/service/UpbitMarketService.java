@@ -26,4 +26,9 @@ public class UpbitMarketService {
     public void saveAll(List<UpbitMarket> upbitSymbols) {
         upbitMarketRepository.saveAll(upbitSymbols);
     }
+
+    @Transactional(readOnly = true)
+    public List<UpbitMarket> findMarketsStartWithKRW() {
+        return upbitMarketRepository.findMarketsStartWithKRW();
+    }
 }
