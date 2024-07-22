@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: test
+
+  datasource:
+    url: jdbc:postgresql://localhost:5431/trendex
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: 1234
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+access-key: accesskey
+secret-key: secretkey
