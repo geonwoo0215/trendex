@@ -22,7 +22,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # graldew 실행권한 부여
+      # 테스트를 진행하기 위해 액션 서버에 docker로 postgresql 띄우기
+      - name: Create PostgreSQL Docker Container
+        run: sudo docker run -d -p 5432:5432 --env POSTGRES_DB="${{ secrets.TEST_DATABASE }}" --env POSTGRES_PASSWORD="${{ secrets.TEST_DATASOURCE_PASSWORD }}" postgres:13
+
+      # gradlew 실행권한 부여
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
         
