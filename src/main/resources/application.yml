@@ -4,3 +4,13 @@ spring:
       on-profile: local
     import:
       - classpath:trendex-secrets/application-local.yml
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import:
+      - classpath:trendex-secrets/application-prod.yml
