@@ -62,4 +62,6 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
+            sudo ./deploy.sh
+            
             docker image prune -f
