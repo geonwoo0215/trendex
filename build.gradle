@@ -61,3 +61,13 @@ tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
 }
+
+processResources.dependsOn('copySecret')
+
+tasks.register('copySecret', Copy) {
+
+    from('./src/main/resources/trendex-secret') {
+        include('*.yml')
+    }
+    into('src/main/resources')
+}
