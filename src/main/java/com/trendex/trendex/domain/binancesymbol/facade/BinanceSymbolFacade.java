@@ -4,6 +4,7 @@ import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.domain.binancesymbol.service.BinanceSymbolFetchService;
 import com.trendex.trendex.domain.binancesymbol.service.BinanceSymbolService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class BinanceSymbolFacade {
 
     private final BinanceSymbolService binanceSymbolService;
 
-    //    @Scheduled(fixedRate = 100000)
+    @Scheduled(fixedRate = 86400000)
     public void fetchAndSaveBinanceData() {
         List<BinanceSymbol> binanceSymbols = binanceSymbolFetchService.fetchBinanceData();
         binanceSymbolService.saveAll(binanceSymbols);

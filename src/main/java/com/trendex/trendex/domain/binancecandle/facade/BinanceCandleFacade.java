@@ -14,6 +14,7 @@ import com.trendex.trendex.domain.rsi.binancersi.model.BinanceRsi;
 import com.trendex.trendex.domain.rsi.binancersi.service.BinanceRsiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,8 +38,7 @@ public class BinanceCandleFacade {
 
     private final BinanceRsiService binanceRsiService;
 
-    //    @Scheduled(cron = "0 */5 * * * *")
-//    @Scheduled(fixedRate = 60000000)
+    @Scheduled(cron = "0 */1 * * * *")
     public void fetchAndSaveBinanceData() {
 
         List<BinanceSymbol> binanceSymbols = binanceSymbolService.findAll();
