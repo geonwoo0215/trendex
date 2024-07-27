@@ -79,8 +79,6 @@ public class UpbitWebClientService {
     @RateLimiter(name = "upbit")
     public Mono<List<UpbitCandleResponse>> getMinuteCandle(int units, String market, int count) {
 
-        log.info("hi123444444");
-
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/candles/minutes/{unit}")
