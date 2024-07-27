@@ -43,8 +43,7 @@ public class UpbitCandleFacade {
 
     private final UpbitRsiService upbitRsiService;
 
-    //    @Scheduled(cron = "0 */1 * * * *")
-    @Scheduled(fixedRate = 60000000)
+    @Scheduled(cron = "0 */1 * * * *")
     public void fetchSaveAndAnalyzeUpbitData() {
 
         List<UpbitMarket> upbitMarkets = upbitMarketService.findMarketsStartWithKRW();
