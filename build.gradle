@@ -65,9 +65,9 @@ tasks.named('asciidoctor') {
 
 processResources.dependsOn('copySecret')
 
-tasks.register('copySecret', Copy) {
-    from('./src/main/resources/trendex-secret') {
-        include('application-prod.yml')
-    }
-    into('src/main/resources')
-}
+//tasks.register('copySecret', Copy) {
+//    from('./src/main/resources/trendex-secret') {
+//        include('application-prod.yml')
+//    }
+//    into('src/main/resources')
+//}
