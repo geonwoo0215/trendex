@@ -1,18 +1,13 @@
 package com.trendex.trendex.domain.macd.upbitmacd.facade;
 
-import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
-import com.trendex.trendex.domain.candle.Decision;
 import com.trendex.trendex.domain.macd.dto.MacdResponse;
-import com.trendex.trendex.domain.macd.upbitmacd.model.UpbitMacd;
 import com.trendex.trendex.domain.macd.upbitmacd.service.UpbitMacdService;
-import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -24,21 +19,9 @@ public class UpbitMacdFacade {
     private final UpbitMacdService upbitMacdService;
 
     public List<MacdResponse> findAllMacds() {
-        List<String> upbitMarkets = upbitMarketService.findAll()
-                .stream()
-                .map(UpbitMarket::getMarket)
-                .collect(Collectors.toList());
-
-        return upbitMacdService.findLatest(upbitMarkets)
-                .stream()
-                .map(upbitMacd -> {
-                    Decision decision = decideByMacd(upbitMacd);
-                    return new MacdResponse(upbitMacd.getMarket(), decision.getText(), upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue());
-                })
-                .collect(Collectors.toList());
+        List<String> upbitMarkets = upbitMarketService.findAll();
+        return upbitMacdService.findLatest(upbitMarkets);
     }
 
-    public Decision decideByMacd(UpbitMacd upbitMacd) {
-        return CandleAnalysisUtil.decideByMacd(upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue(), upbitMacd.isSignalHigherThanMacd());
-    }
+
 }

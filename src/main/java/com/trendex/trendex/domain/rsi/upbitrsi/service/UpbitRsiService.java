@@ -1,5 +1,8 @@
 package com.trendex.trendex.domain.rsi.upbitrsi.service;
 
+import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
+import com.trendex.trendex.domain.candle.Decision;
+import com.trendex.trendex.domain.rsi.dto.RsiResponse;
 import com.trendex.trendex.domain.rsi.upbitrsi.model.UpbitRsi;
 import com.trendex.trendex.domain.rsi.upbitrsi.repository.UpbitRsiJdbcRepository;
 import com.trendex.trendex.domain.rsi.upbitrsi.repository.UpbitRsiRepository;
@@ -10,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +37,14 @@ public class UpbitRsiService {
     }
 
     @Transactional(readOnly = true)
-    public List<UpbitRsi> findLatest(List<String> markets) {
-        return upbitRsiRepository.findLatestForMarkets(markets);
+    public List<RsiResponse> findLatest(List<String> markets) {
+        return upbitRsiRepository.findLatestForMarkets(markets)
+                .stream()
+                .map(upbitRsi -> {
+                    Decision decision = CandleAnalysisUtil.decideByRsi(upbitRsi.getValue());
+                    return new RsiResponse(upbitRsi.getMarket(), decision.getText(), upbitRsi.getValue());
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional

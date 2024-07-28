@@ -1,8 +1,11 @@
 package com.trendex.trendex.domain.macd.binancemacd.service;
 
+import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
+import com.trendex.trendex.domain.candle.Decision;
 import com.trendex.trendex.domain.macd.binancemacd.model.BinanceMacd;
 import com.trendex.trendex.domain.macd.binancemacd.repository.BinanceMacdJdbcRepository;
 import com.trendex.trendex.domain.macd.binancemacd.repository.BinanceMacdRepository;
+import com.trendex.trendex.domain.macd.dto.MacdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +39,14 @@ public class BinanceMacdService {
     }
 
     @Transactional(readOnly = true)
-    public List<BinanceMacd> findLatest(List<String> markets) {
-        return binanceMacdRepository.findLatestForSymbol(markets);
+    public List<MacdResponse> findLatest(List<String> markets) {
+        return binanceMacdRepository.findLatestForSymbol(markets)
+                .stream()
+                .map(binanceMacd -> {
+                    Decision decision = CandleAnalysisUtil.decideByMacd(binanceMacd.getMacdValue(), binanceMacd.getMacdSignalValue(), binanceMacd.getSignalHigherThanMacd());
+                    return new MacdResponse(binanceMacd.getSymbol(), decision.getText(), binanceMacd.getMacdValue(), binanceMacd.getMacdSignalValue());
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional

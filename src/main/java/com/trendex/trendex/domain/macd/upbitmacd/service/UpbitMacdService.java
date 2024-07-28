@@ -1,5 +1,8 @@
 package com.trendex.trendex.domain.macd.upbitmacd.service;
 
+import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
+import com.trendex.trendex.domain.candle.Decision;
+import com.trendex.trendex.domain.macd.dto.MacdResponse;
 import com.trendex.trendex.domain.macd.upbitmacd.model.UpbitMacd;
 import com.trendex.trendex.domain.macd.upbitmacd.repository.UpbitMacdJdbcRepository;
 import com.trendex.trendex.domain.macd.upbitmacd.repository.UpbitMacdRepository;
@@ -10,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +40,14 @@ public class UpbitMacdService {
     }
 
     @Transactional(readOnly = true)
-    public List<UpbitMacd> findLatest(List<String> markets) {
-        return upbitMacdRepository.findLatestForMarkets(markets);
+    public List<MacdResponse> findLatest(List<String> markets) {
+        return upbitMacdRepository.findLatestForMarkets(markets)
+                .stream()
+                .map(upbitMacd -> {
+                    Decision decision = CandleAnalysisUtil.decideByMacd(upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue(), upbitMacd.isSignalHigherThanMacd());
+                    return new MacdResponse(upbitMacd.getMarket(), decision.getText(), upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue());
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional
