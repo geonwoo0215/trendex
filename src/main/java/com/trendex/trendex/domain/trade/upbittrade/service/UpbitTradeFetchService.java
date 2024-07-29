@@ -1,7 +1,6 @@
 package com.trendex.trendex.domain.trade.upbittrade.service;
 
 import com.trendex.trendex.domain.trade.upbittrade.model.UpbitTrade;
-import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitTradeResponse;
 import com.trendex.trendex.global.client.webclient.service.UpbitWebClientService;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +16,13 @@ public class UpbitTradeFetchService {
 
     private final UpbitWebClientService upbitWebClientService;
 
-    public Flux<UpbitTrade> fetchUpbitData(List<UpbitMarket> upbitSymbols) {
+    public Flux<UpbitTrade> fetchUpbitData(List<String> upbitSymbols) {
 
         return Flux.fromIterable(upbitSymbols)
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(upbitSymbol ->
-                        upbitWebClientService.getTrades(upbitSymbol.getMarket())
+                        upbitWebClientService.getTrades(upbitSymbol)
                                 .flatMapMany(Flux::fromIterable)
                                 .map(UpbitTradeResponse::toUpbitTrade)
                 )

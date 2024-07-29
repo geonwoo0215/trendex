@@ -1,6 +1,5 @@
 package com.trendex.trendex.domain.orderbook.binanceorderbook.service;
 
-import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.domain.orderbook.binanceorderbook.model.BinanceOrderBook;
 import com.trendex.trendex.global.client.webclient.service.BinanceWebClientService;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +15,13 @@ public class BinanceOrderBookFetchService {
 
     private final BinanceWebClientService binanceWebClientService;
 
-    public Flux<BinanceOrderBook> fetchBinanceData(List<BinanceSymbol> binanceSymbols) {
+    public Flux<BinanceOrderBook> fetchBinanceData(List<String> binanceSymbols) {
         return Flux.fromIterable(binanceSymbols)
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(binanceSymbol ->
-                        binanceWebClientService.getOrderBook(binanceSymbol.getSymbol())
-                                .flatMapMany(orderBookResponse -> Flux.fromIterable(orderBookResponse.toBinanceOrderBook(binanceSymbol.getSymbol())))
+                        binanceWebClientService.getOrderBook(binanceSymbol)
+                                .flatMapMany(orderBookResponse -> Flux.fromIterable(orderBookResponse.toBinanceOrderBook(binanceSymbol)))
                 )
                 .sequential();
     }

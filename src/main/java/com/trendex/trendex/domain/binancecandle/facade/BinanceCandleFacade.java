@@ -3,7 +3,6 @@ package com.trendex.trendex.domain.binancecandle.facade;
 import com.trendex.trendex.domain.binancecandle.model.BinanceCandle;
 import com.trendex.trendex.domain.binancecandle.service.BinanceCandleFetchService;
 import com.trendex.trendex.domain.binancecandle.service.BinanceCandleService;
-import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.domain.binancesymbol.service.BinanceSymbolService;
 import com.trendex.trendex.domain.candle.CandleAnalysisTime;
 import com.trendex.trendex.domain.candle.CryptoClosePrice;
@@ -41,8 +40,7 @@ public class BinanceCandleFacade {
     @Scheduled(cron = "0 */1 * * * *")
     public void fetchAndSaveBinanceData() {
 
-        List<BinanceSymbol> binanceSymbols = binanceSymbolService.findAll();
-
+        List<String> binanceSymbols = binanceSymbolService.findAll();
         Flux<BinanceCandle> binanceCandleFlux = binanceCandleFetchService.fetchBinanceData(binanceSymbols);
         binanceCandleService.saveAll(binanceCandleFlux)
                 .then(Mono.zip(
@@ -54,22 +52,22 @@ public class BinanceCandleFacade {
                 .subscribe();
     }
 
-    public void saveMacd(List<BinanceSymbol> binanceSymbols) {
+    public void saveMacd(List<String> binanceSymbols) {
         List<BinanceMacd> binanceMacds = binanceSymbols
                 .parallelStream()
                 .map(binanceSymbol -> {
-                    List<CryptoClosePrice> closePriceList26 = binanceCandleService.getClosePricesBySymbolAndTime(binanceSymbol.getSymbol(), CandleAnalysisTime.MACD_TWENTY_SIX_TIME_STAMP.getTime());
+                    List<CryptoClosePrice> closePriceList26 = binanceCandleService.getClosePricesBySymbolAndTime(binanceSymbol, CandleAnalysisTime.MACD_TWENTY_SIX_TIME_STAMP.getTime());
                     CryptoClosePrices cryptoClosePrices26 = new CryptoClosePrices(closePriceList26);
 
                     List<CryptoClosePrice> closePriceList12 = cryptoClosePrices26.getClosePriceValues(CandleAnalysisTime.MACD_TWELVE_TIME_STAMP);
                     CryptoClosePrices cryptoClosePrices12 = new CryptoClosePrices(closePriceList12);
 
-                    List<Double> macdValues = binanceMacdService.findAllBySymbolAndTimeStamp(binanceSymbol.getSymbol(), CandleAnalysisTime.MACD_NINE_TIME_STAMP.getTime());
+                    List<Double> macdValues = binanceMacdService.findAllBySymbolAndTimeStamp(binanceSymbol, CandleAnalysisTime.MACD_NINE_TIME_STAMP.getTime());
 
                     List<Double> closePriceValues26 = cryptoClosePrices26.getClosePriceValues();
                     List<Double> closePriceValues12 = cryptoClosePrices12.getClosePriceValues();
 
-                    return BinanceMacd.of(binanceSymbol.getSymbol(), closePriceValues26, closePriceValues12, macdValues);
+                    return BinanceMacd.of(binanceSymbol, closePriceValues26, closePriceValues12, macdValues);
                 })
                 .filter(Objects::nonNull)
                 .toList();
@@ -78,14 +76,14 @@ public class BinanceCandleFacade {
 
     }
 
-    public void saveRsi(List<BinanceSymbol> binanceSymbols) {
+    public void saveRsi(List<String> binanceSymbols) {
 
         List<BinanceRsi> binanceRsis = binanceSymbols
                 .parallelStream()
                 .map(binanceSymbol -> {
-                    List<CryptoClosePrice> closePriceList = binanceCandleService.getClosePricesBySymbolAndTime(binanceSymbol.getSymbol(), CandleAnalysisTime.RSI_FOURTEEN_TIME_STAMP.getTime());
+                    List<CryptoClosePrice> closePriceList = binanceCandleService.getClosePricesBySymbolAndTime(binanceSymbol, CandleAnalysisTime.RSI_FOURTEEN_TIME_STAMP.getTime());
                     CryptoClosePrices cryptoClosePrices = new CryptoClosePrices(closePriceList);
-                    return BinanceRsi.of(binanceSymbol.getSymbol(), cryptoClosePrices.getClosePriceValues());
+                    return BinanceRsi.of(binanceSymbol, cryptoClosePrices.getClosePriceValues());
                 })
                 .filter(Objects::nonNull)
                 .toList();

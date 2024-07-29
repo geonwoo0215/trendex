@@ -9,6 +9,7 @@ import com.trendex.trendex.domain.rsi.binancersi.model.BinanceRsi;
 import com.trendex.trendex.domain.rsi.binancersi.repository.BinanceRsiRepository;
 import com.trendex.trendex.global.client.webclient.service.TelegramService;
 import com.trendex.trendex.global.client.webclient.service.TelegramWebClientService;
+import com.trendex.trendex.global.common.util.RedisUtil;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -48,6 +49,9 @@ class BinanceRsiControllerTest {
 
     @MockBean
     TelegramService telegramService;
+
+    @MockBean
+    RedisUtil redisUtil;
 
     @Test
     @Transactional

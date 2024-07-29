@@ -1,7 +1,6 @@
 package com.trendex.trendex.domain.orderbook.upbitorderbook.service;
 
 import com.trendex.trendex.domain.orderbook.upbitorderbook.model.UpbitOrderBook;
-import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.global.client.webclient.service.UpbitWebClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,17 +15,17 @@ public class UpbitOrderBookFetchService {
 
     private final UpbitWebClientService upbitWebClientService;
 
-    public Flux<UpbitOrderBook> fetchUpbitData(List<UpbitMarket> upbitSymbols) {
+    public Flux<UpbitOrderBook> fetchUpbitData(List<String> upbitSymbols) {
         return Flux.fromIterable(upbitSymbols)
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(upbitSymbol ->
-                        upbitWebClientService.getOrderBook(upbitSymbol.getMarket())
+                        upbitWebClientService.getOrderBook(upbitSymbol)
                                 .flatMapMany(Flux::fromIterable)
                                 .flatMap(upbitOrderBookResponse ->
                                         Flux.fromStream(
                                                 upbitOrderBookResponse.getOrderBookUnits().stream()
-                                                        .map(upbitOrderBookData -> upbitOrderBookData.toUpbitOrderBook(upbitSymbol.getMarket()))
+                                                        .map(upbitOrderBookData -> upbitOrderBookData.toUpbitOrderBook(upbitSymbol))
                                         )
                                 )
                 )

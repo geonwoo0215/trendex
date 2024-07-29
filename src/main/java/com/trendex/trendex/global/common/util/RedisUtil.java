@@ -1,12 +1,14 @@
 package com.trendex.trendex.global.common.util;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
 @Component
+@Profile("!test")
 @RequiredArgsConstructor
 public class RedisUtil {
 
@@ -16,7 +18,7 @@ public class RedisUtil {
         return redisTemplate.opsForValue().get(key);
     }
 
-    public void setData(String key, String value, long duration) {
+    public void setData(String key, Object value, long duration) {
         redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(duration));
     }
 

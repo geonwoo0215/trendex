@@ -2,7 +2,6 @@ package com.trendex.trendex.domain.trade.upbittrade.facade;
 
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeFetchService;
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeService;
-import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ public class UpbitTradeFacade {
 
     //    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveUpbitData() {
-        List<UpbitMarket> upbitSymbols = upbitMarketService.findAll();
+        List<String> upbitSymbols = upbitMarketService.findAll();
 
         upbitTradeFetchService.fetchUpbitData(upbitSymbols)
                 .buffer(1000)

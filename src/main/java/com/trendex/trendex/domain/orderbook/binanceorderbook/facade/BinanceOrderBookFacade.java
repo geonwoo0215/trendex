@@ -1,6 +1,5 @@
 package com.trendex.trendex.domain.orderbook.binanceorderbook.facade;
 
-import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.domain.binancesymbol.service.BinanceSymbolService;
 import com.trendex.trendex.domain.orderbook.binanceorderbook.service.BinanceOrderBookFetchService;
 import com.trendex.trendex.domain.orderbook.binanceorderbook.service.BinanceOrderBookService;
@@ -25,7 +24,7 @@ public class BinanceOrderBookFacade {
 
     //    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveBinanceData() {
-        List<BinanceSymbol> binanceSymbols = binanceSymbolService.findAll();
+        List<String> binanceSymbols = binanceSymbolService.findAll();
         binanceOrderBookFetchService.fetchBinanceData(binanceSymbols)
                 .buffer(1000)
                 .flatMap(binanceOrderBooks -> Mono.fromFuture(CompletableFuture.runAsync(() -> binanceOrderBookService.saveAll(binanceOrderBooks))))

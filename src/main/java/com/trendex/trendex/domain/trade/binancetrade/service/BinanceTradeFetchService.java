@@ -1,6 +1,5 @@
 package com.trendex.trendex.domain.trade.binancetrade.service;
 
-import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.domain.trade.binancetrade.model.BinanceTrade;
 import com.trendex.trendex.global.client.webclient.service.BinanceWebClientService;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +15,15 @@ public class BinanceTradeFetchService {
 
     private final BinanceWebClientService binanceWebClientService;
 
-    public Flux<BinanceTrade> fetchBinanceData(List<BinanceSymbol> binanceSymbols) {
+    public Flux<BinanceTrade> fetchBinanceData(List<String> binanceSymbols) {
 
         return Flux.fromIterable(binanceSymbols)
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(binanceSymbol ->
-                        binanceWebClientService.getTrade(binanceSymbol.getSymbol())
+                        binanceWebClientService.getTrade(binanceSymbol)
                                 .flatMapMany(Flux::fromIterable)
-                                .map(binanceTradeResponse -> binanceTradeResponse.toBinanceTrade(binanceSymbol.getSymbol()))
+                                .map(binanceTradeResponse -> binanceTradeResponse.toBinanceTrade(binanceSymbol))
                 )
                 .sequential();
 
