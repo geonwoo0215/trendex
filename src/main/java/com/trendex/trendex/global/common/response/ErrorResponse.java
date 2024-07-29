@@ -1,4 +1,4 @@
-package com.trendex.trendex.global.common;
+package com.trendex.trendex.global.common.response;
 
 public class ErrorResponse {
 

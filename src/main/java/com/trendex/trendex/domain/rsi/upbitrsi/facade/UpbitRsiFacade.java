@@ -1,45 +1,40 @@
 package com.trendex.trendex.domain.rsi.upbitrsi.facade;
 
-import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
-import com.trendex.trendex.domain.candle.Decision;
 import com.trendex.trendex.domain.rsi.dto.RsiResponse;
-import com.trendex.trendex.domain.rsi.upbitrsi.model.UpbitRsi;
 import com.trendex.trendex.domain.rsi.upbitrsi.service.UpbitRsiService;
-import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
+import com.trendex.trendex.global.common.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UpbitRsiFacade {
 
+    private static final String REDIS_KEY = "UPBIT_RSI_RESPONSES";
+
     private final UpbitMarketService upbitMarketService;
 
     private final UpbitRsiService upbitRsiService;
 
+    private final RedisUtil redisUtil;
+
     public List<RsiResponse> findAllRsis() {
-        List<String> upbitMarkets = upbitMarketService.findAll()
-                .stream()
-                .map(UpbitMarket::getMarket)
-                .collect(Collectors.toList());
 
-        return upbitRsiService.findLatest(upbitMarkets)
-                .stream()
-                .map(upbitRsi -> {
-                    Decision decision = decideByRsi(upbitRsi);
-                    return new RsiResponse(upbitRsi.getMarket(), decision.getText(), upbitRsi.getValue());
-                })
-                .collect(Collectors.toList());
-    }
+        if (redisUtil.hasKey(REDIS_KEY)) {
+            return (List<RsiResponse>) redisUtil.get(REDIS_KEY);
+        }
 
-    public Decision decideByRsi(UpbitRsi upbitRsi) {
-        return CandleAnalysisUtil.decideByRsi(upbitRsi.getValue());
+        List<String> binanceSymbols = upbitMarketService.findAll();
+        List<RsiResponse> rsiResponses = upbitRsiService.findLatest(binanceSymbols);
+
+        redisUtil.setData(REDIS_KEY, rsiResponses, 60);
+
+        return rsiResponses;
     }
 
 

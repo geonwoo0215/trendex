@@ -1,7 +1,6 @@
 package com.trendex.trendex.domain.binancecandle.service;
 
 import com.trendex.trendex.domain.binancecandle.model.BinanceCandle;
-import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.global.client.webclient.dto.binance.BinanceCandleResponse;
 import com.trendex.trendex.global.client.webclient.service.BinanceWebClientService;
 import lombok.RequiredArgsConstructor;
@@ -17,15 +16,15 @@ public class BinanceCandleFetchService {
 
     private final BinanceWebClientService binanceWebClientService;
 
-    public Flux<BinanceCandle> fetchBinanceData(List<BinanceSymbol> binanceSymbols) {
+    public Flux<BinanceCandle> fetchBinanceData(List<String> binanceSymbols) {
 
         return Flux.fromIterable(binanceSymbols)
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(binanceSymbol ->
-                        binanceWebClientService.getCandle(binanceSymbol.getSymbol(), "1m", 1)
+                        binanceWebClientService.getCandle(binanceSymbol, "1m", 1)
                                 .flatMapMany(Flux::fromIterable)
-                                .map(binanceCandle -> mapToBinanceCandle(binanceCandle).toBinanceCandle(binanceSymbol.getSymbol()))
+                                .map(binanceCandle -> mapToBinanceCandle(binanceCandle).toBinanceCandle(binanceSymbol))
                 )
                 .sequential();
 

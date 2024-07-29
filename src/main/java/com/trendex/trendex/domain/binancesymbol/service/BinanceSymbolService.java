@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,14 +19,12 @@ public class BinanceSymbolService {
     private final BinanceSymbolJdbcRepository binanceJdbcRepository;
 
     @Transactional(readOnly = true)
-    public List<BinanceSymbol> findAll() {
-        return binanceSymbolRepository.findAll();
+    public List<String> findAll() {
+        return binanceSymbolRepository.findAll()
+                .stream()
+                .map(BinanceSymbol::getSymbol)
+                .collect(Collectors.toList());
     }
-
-//    @Transactional
-//    public void saveAll(List<BinanceSymbol> binanceSymbols) {
-//        binanceJdbcRepository.batchInsert(binanceSymbols);
-//    }
 
     @Transactional
     public void saveAll(List<BinanceSymbol> binanceSymbols) {

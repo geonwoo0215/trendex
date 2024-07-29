@@ -1,6 +1,5 @@
 package com.trendex.trendex.domain.trade.binancetrade.facade;
 
-import com.trendex.trendex.domain.binancesymbol.model.BinanceSymbol;
 import com.trendex.trendex.domain.binancesymbol.service.BinanceSymbolService;
 import com.trendex.trendex.domain.trade.binancetrade.service.BinanceTradeFetchService;
 import com.trendex.trendex.domain.trade.binancetrade.service.BinanceTradeService;
@@ -24,7 +23,7 @@ public class BinanceTradeFacade {
     private final BinanceSymbolService binanceSymbolService;
 
     public void fetchAndSaveBinanceData() {
-        List<BinanceSymbol> binanceSymbols = binanceSymbolService.findAll();
+        List<String> binanceSymbols = binanceSymbolService.findAll();
         binanceTradeFetchService.fetchBinanceData(binanceSymbols)
                 .buffer(1000)
                 .flatMap(binanceTrades -> Mono.fromFuture(CompletableFuture.runAsync(() -> binanceTradeService.saveAll(binanceTrades))))

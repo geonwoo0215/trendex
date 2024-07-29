@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +19,11 @@ public class UpbitMarketService {
     private final UpbitMarketJdbcRepository upbitMarketJdbcRepository;
 
     @Transactional(readOnly = true)
-    public List<UpbitMarket> findAll() {
-        return upbitMarketRepository.findAll();
+    public List<String> findAll() {
+        return upbitMarketRepository.findAll()
+                .stream()
+                .map(UpbitMarket::getMarket)
+                .collect(Collectors.toList());
     }
 
     @Transactional

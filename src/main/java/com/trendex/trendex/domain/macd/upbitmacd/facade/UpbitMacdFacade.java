@@ -1,44 +1,40 @@
 package com.trendex.trendex.domain.macd.upbitmacd.facade;
 
-import com.trendex.trendex.domain.candle.CandleAnalysisUtil;
-import com.trendex.trendex.domain.candle.Decision;
 import com.trendex.trendex.domain.macd.dto.MacdResponse;
-import com.trendex.trendex.domain.macd.upbitmacd.model.UpbitMacd;
 import com.trendex.trendex.domain.macd.upbitmacd.service.UpbitMacdService;
-import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
+import com.trendex.trendex.global.common.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UpbitMacdFacade {
 
+    private static final String REDIS_KEY = "BINANCE_RSI_RESPONSES";
+
     private final UpbitMarketService upbitMarketService;
 
     private final UpbitMacdService upbitMacdService;
 
+    private final RedisUtil redisUtil;
+
     public List<MacdResponse> findAllMacds() {
-        List<String> upbitMarkets = upbitMarketService.findAll()
-                .stream()
-                .map(UpbitMarket::getMarket)
-                .collect(Collectors.toList());
 
-        return upbitMacdService.findLatest(upbitMarkets)
-                .stream()
-                .map(upbitMacd -> {
-                    Decision decision = decideByMacd(upbitMacd);
-                    return new MacdResponse(upbitMacd.getMarket(), decision.getText(), upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue());
-                })
-                .collect(Collectors.toList());
+        if (redisUtil.hasKey(REDIS_KEY)) {
+            return (List<MacdResponse>) redisUtil.get(REDIS_KEY);
+        }
+
+        List<String> upbitMarkets = upbitMarketService.findAll();
+        List<MacdResponse> macdResponses = upbitMacdService.findLatest(upbitMarkets);
+
+        redisUtil.setData(REDIS_KEY, macdResponses, 60);
+        return macdResponses;
     }
 
-    public Decision decideByMacd(UpbitMacd upbitMacd) {
-        return CandleAnalysisUtil.decideByMacd(upbitMacd.getMacdValue(), upbitMacd.getMacdSignalValue(), upbitMacd.isSignalHigherThanMacd());
-    }
+
 }
