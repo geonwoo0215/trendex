@@ -1,12 +1,18 @@
 package com.trendex.trendex.config;
 
+import com.trendex.trendex.domain.orderbook.upbitorderbook.model.UpbitOrderBook;
+import com.trendex.trendex.domain.orderbook.upbitorderbook.model.UpbitOrderBookUnit;
 import com.trendex.trendex.domain.rsi.upbitrsi.model.UpbitRsi;
+import com.trendex.trendex.domain.trade.upbittrade.model.UpbitTrade;
 import com.trendex.trendex.domain.upbitcandle.model.UpbitCandle;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -70,5 +76,83 @@ public class DataLoader {
             }
         });
     }
+
+    public void batchUpbitOrderBookInsert(List<UpbitOrderBook> upbitOrderBooks) {
+
+        for (UpbitOrderBook orderBook : upbitOrderBooks) {
+            Long orderBookId = insertOrderBookAndGetId(orderBook);
+
+            insertOrderBookUnits(orderBook.getUpbitOrderBookUnits(), orderBookId);
+        }
+    }
+
+    private Long insertOrderBookAndGetId(UpbitOrderBook orderBook) {
+        String sql = "INSERT INTO upbit_order_book (market, timestamp, total_ask_size, total_bid_size) VALUES (?, ?, ?, ?)";
+
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
+                ps.setString(1, orderBook.getMarket());
+                ps.setLong(2, orderBook.getTimestamp());
+                ps.setDouble(3, orderBook.getTotalAskSize());
+                ps.setDouble(4, orderBook.getTotalBidSize());
+                return ps;
+            }
+        }, keyHolder);
+
+        return keyHolder.getKeyAs(Long.class);
+    }
+
+    private void insertOrderBookUnits(List<UpbitOrderBookUnit> units, Long orderBookId) {
+        String sql = "INSERT INTO upbit_order_book_unit (ask_price, bid_price, ask_size, bid_size, upbit_order_book_id) VALUES (?, ?, ?, ?, ?)";
+
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                UpbitOrderBookUnit unit = units.get(i);
+                ps.setLong(1, unit.getAskPrice());
+                ps.setLong(2, unit.getBidPrice());
+                ps.setDouble(3, unit.getAskSize());
+                ps.setDouble(4, unit.getBidSize());
+                ps.setLong(5, orderBookId); // Associate with the UpbitOrderBook ID
+            }
+
+            @Override
+            public int getBatchSize() {
+                return units.size();
+            }
+        });
+    }
+
+    public void batchUpbitTradeInsert(List<UpbitTrade> upbitTrades) {
+        String sql = "INSERT INTO upbit_trade (market, trade_date_utc, trade_time_utc, timestamp, trade_price, trade_volume, prev_closing_price, change_price, ask_bid, sequential_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                UpbitTrade upbitTrade = upbitTrades.get(i);
+                ps.setString(1, upbitTrade.getMarket());
+                ps.setString(2, upbitTrade.getTradeDateUtc());
+                ps.setString(3, upbitTrade.getTradeTimeUtc());
+                ps.setLong(4, upbitTrade.getTimestamp());
+                ps.setLong(5, upbitTrade.getTradePrice());
+                ps.setDouble(6, upbitTrade.getTradeVolume());
+                ps.setLong(7, upbitTrade.getPrevClosingPrice());
+                ps.setLong(8, upbitTrade.getChangePrice());
+                ps.setString(9, upbitTrade.getAskBid());
+                ps.setLong(10, upbitTrade.getSequentialId());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return upbitTrades.size();
+            }
+        });
+    }
+
 
 }

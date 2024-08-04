@@ -1,7 +1,7 @@
-package com.trendex.trendex.domain.orderbook.upbitorderbook.service;
+package com.trendex.trendex.domain.ticker.upbitTicker.service;
 
-import com.trendex.trendex.domain.orderbook.upbitorderbook.model.UpbitOrderBook;
-import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitOrderBookResponse;
+import com.trendex.trendex.domain.ticker.upbitTicker.model.UpbitTicker;
+import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitTickerResponse;
 import com.trendex.trendex.global.client.webclient.service.UpbitWebClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,20 +12,22 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UpbitOrderBookFetchService {
+public class UpbitTickerFetchService {
 
     private final UpbitWebClientService upbitWebClientService;
 
-    public Flux<UpbitOrderBook> fetchUpbitData(List<String> upbitMarkets) {
-        return Flux.fromIterable(upbitMarkets)
+    public Flux<UpbitTicker> fetchUpbitData(List<String> upbitSymbols) {
+
+        return Flux.fromIterable(upbitSymbols)
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(upbitMarket ->
-                        upbitWebClientService.getOrderBook(upbitMarket)
+                        upbitWebClientService.getTicker(upbitMarket)
                                 .flatMapMany(Flux::fromIterable)
-                                .map(UpbitOrderBookResponse::toUpbitOrderBook)
-                )
+                                .map(UpbitTickerResponse::toUpbitTicker))
                 .sequential();
+
     }
+
 
 }

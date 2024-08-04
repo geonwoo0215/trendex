@@ -27,7 +27,7 @@ public class UpbitTradeResponse {
     private long sequentialId;
 
     public UpbitTrade toUpbitTrade() {
-        return new UpbitTrade(sequentialId, market, tradeDateUtc, tradeTimeUtc, timestamp, tradePrice, tradeVolume, prevClosingPrice, changePrice, askBid);
+        return new UpbitTrade(market, tradeDateUtc, tradeTimeUtc, timestamp, tradePrice, tradeVolume, prevClosingPrice, changePrice, askBid, sequentialId);
     }
 
 }

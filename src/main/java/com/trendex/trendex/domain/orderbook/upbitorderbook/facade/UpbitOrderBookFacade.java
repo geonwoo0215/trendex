@@ -1,15 +1,16 @@
 package com.trendex.trendex.domain.orderbook.upbitorderbook.facade;
 
+import com.trendex.trendex.domain.orderbook.upbitorderbook.model.UpbitOrderBook;
 import com.trendex.trendex.domain.orderbook.upbitorderbook.service.UpbitOrderBookFetchService;
 import com.trendex.trendex.domain.orderbook.upbitorderbook.service.UpbitOrderBookService;
 import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -22,14 +23,13 @@ public class UpbitOrderBookFacade {
 
     private final UpbitMarketService upbitMarketService;
 
-    //    @Scheduled(cron = "0 */3 * * * *")
+    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveUpbitData() {
         List<String> upbitSymbols = upbitMarketService.findAll();
-        upbitOrderBookFetchService.fetchUpbitData(upbitSymbols)
-                .buffer(1000)
-                .flatMap(upbitOrderBooks -> Mono.fromFuture(CompletableFuture.runAsync(() -> upbitOrderBookService.saveAll(upbitOrderBooks))))
+
+        Flux<UpbitOrderBook> upbitOrderBookFlux = upbitOrderBookFetchService.fetchUpbitData(upbitSymbols);
+        upbitOrderBookService.saveAll(upbitOrderBookFlux)
                 .subscribe();
-        log.info("upbit fetch done");
     }
 
 }

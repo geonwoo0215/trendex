@@ -23,12 +23,12 @@ public class BinanceRsiController {
     private final BinanceRsiFacade binanceRsiFacade;
 
     @Operation(
-            summary = "업비트 rsi 조회 api",
-            description = "업비트 rsi 반환",
+            summary = "바이낸스 rsi 조회 api",
+            description = "바이낸스 rsi 반환",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "업비트 rsi 값 반환",
+                            description = "바이낸스 rsi 값 반환",
                             content = @Content(schema = @Schema(implementation = RsiResponse.class))
                     )
             }

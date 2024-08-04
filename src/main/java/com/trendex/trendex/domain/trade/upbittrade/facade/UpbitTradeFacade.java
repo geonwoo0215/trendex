@@ -1,10 +1,12 @@
 package com.trendex.trendex.domain.trade.upbittrade.facade;
 
+import com.trendex.trendex.domain.trade.upbittrade.dto.MarketAggregateDto;
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeFetchService;
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeService;
 import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +24,7 @@ public class UpbitTradeFacade {
 
     private final UpbitMarketService upbitMarketService;
 
-    //    @Scheduled(cron = "0 */3 * * * *")
+    @Scheduled(cron = "0 */3 * * * *")
     public void fetchAndSaveUpbitData() {
         List<String> upbitSymbols = upbitMarketService.findAll();
 
@@ -30,7 +32,12 @@ public class UpbitTradeFacade {
                 .buffer(1000)
                 .flatMap(upbitTrades -> Mono.fromFuture(CompletableFuture.runAsync(() -> upbitTradeService.saveAll(upbitTrades))))
                 .subscribe();
-        log.info("upbit fetch done");
+    }
+
+    public MarketAggregateDto findAggregatedMarketData(String market, Long startTime) {
+
+        return upbitTradeService.findAggregatedMarketData(market, startTime);
+
     }
 
 }

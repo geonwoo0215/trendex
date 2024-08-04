@@ -1,7 +1,6 @@
 package com.trendex.trendex.domain.upbitcandle.service;
 
 import com.trendex.trendex.domain.upbitcandle.model.UpbitCandle;
-import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitAccountResponse;
 import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitCandleResponse;
 import com.trendex.trendex.global.client.webclient.dto.upbit.UpbitOrderResponse;
@@ -22,13 +21,13 @@ public class UpbitCandleFetchService {
 
     private final UpbitWebClientService upbitWebClientService;
 
-    public Flux<UpbitCandle> fetchUpbitData(List<UpbitMarket> upbitSymbols) {
+    public Flux<UpbitCandle> fetchUpbitData(List<String> upbitSymbols) {
 
         return Flux.fromIterable(upbitSymbols)
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .flatMap(upbitSymbol ->
-                        upbitWebClientService.getMinuteCandle(1, upbitSymbol.getMarket(), 1)
+                        upbitWebClientService.getMinuteCandle(1, upbitSymbol, 1)
                                 .flatMapMany(Flux::fromIterable)
                                 .map(UpbitCandleResponse::toUpbitCandle)
                 )

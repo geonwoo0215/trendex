@@ -32,7 +32,10 @@ public class UpbitMarketService {
     }
 
     @Transactional(readOnly = true)
-    public List<UpbitMarket> findMarketsStartWithKRW() {
-        return upbitMarketRepository.findMarketsStartWithKRW();
+    public List<String> findMarketsStartWithKRW() {
+        return upbitMarketRepository.findMarketsStartWithKRW()
+                .stream()
+                .map(UpbitMarket::getMarket)
+                .collect(Collectors.toList());
     }
 }
