@@ -11,7 +11,6 @@ import com.trendex.trendex.domain.rsi.upbitrsi.service.UpbitRsiService;
 import com.trendex.trendex.domain.upbitcandle.model.UpbitCandle;
 import com.trendex.trendex.domain.upbitcandle.service.UpbitCandleFetchService;
 import com.trendex.trendex.domain.upbitcandle.service.UpbitCandleService;
-import com.trendex.trendex.domain.upbitmarket.model.UpbitMarket;
 import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
 import com.trendex.trendex.global.client.webclient.service.TelegramService;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +45,7 @@ public class UpbitCandleFacade {
     @Scheduled(cron = "0 */1 * * * *")
     public void fetchSaveAndAnalyzeUpbitData() {
 
-        List<UpbitMarket> upbitMarkets = upbitMarketService.findMarketsStartWithKRW();
+        List<String> upbitMarkets = upbitMarketService.findMarketsStartWithKRW();
         Flux<UpbitCandle> upbitCandlesFlux = upbitCandleFetchService.fetchUpbitData(upbitMarkets);
 
         upbitCandleService.saveAll(upbitCandlesFlux)
@@ -59,10 +58,10 @@ public class UpbitCandleFacade {
                 .subscribe();
     }
 
-    public void saveMacd(List<UpbitMarket> upbitMarkets) {
+    public void saveMacd(List<String> upbitMarkets) {
         List<UpbitMacd> upbitMacds = upbitMarkets.stream()
                 .map(upbitMarket -> {
-                    String market = upbitMarket.getMarket();
+                    String market = upbitMarket;
                     List<CryptoClosePrice> closePriceList26 = upbitCandleService.getClosePricesByMarketAndTime(market, CandleAnalysisTime.MACD_TWENTY_SIX_TIME_STAMP.getTime());
                     CryptoClosePrices cryptoClosePrices26 = new CryptoClosePrices(closePriceList26);
 
@@ -74,7 +73,7 @@ public class UpbitCandleFacade {
                     List<Double> closePriceValues26 = cryptoClosePrices26.getClosePriceValues();
                     List<Double> closePriceValues12 = cryptoClosePrices12.getClosePriceValues();
 
-                    return UpbitMacd.of(upbitMarket.getMarket(), closePriceValues26, closePriceValues12, macdValues);
+                    return UpbitMacd.of(upbitMarket, closePriceValues26, closePriceValues12, macdValues);
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -82,13 +81,13 @@ public class UpbitCandleFacade {
         upbitMacdService.saveAll(upbitMacds);
     }
 
-    public void saveRsi(List<UpbitMarket> upbitMarkets) {
+    public void saveRsi(List<String> upbitMarkets) {
         List<UpbitRsi> upbitRsis = upbitMarkets
                 .parallelStream()
                 .map(upbitMarket -> {
-                    List<CryptoClosePrice> closePriceList = upbitCandleService.getClosePricesByMarketAndTime(upbitMarket.getMarket(), CandleAnalysisTime.RSI_FOURTEEN_TIME_STAMP.getTime());
+                    List<CryptoClosePrice> closePriceList = upbitCandleService.getClosePricesByMarketAndTime(upbitMarket, CandleAnalysisTime.RSI_FOURTEEN_TIME_STAMP.getTime());
                     CryptoClosePrices cryptoClosePrices = new CryptoClosePrices(closePriceList);
-                    return UpbitRsi.of(upbitMarket.getMarket(), cryptoClosePrices.getClosePriceValues());
+                    return UpbitRsi.of(upbitMarket, cryptoClosePrices.getClosePriceValues());
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

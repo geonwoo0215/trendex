@@ -1,12 +1,12 @@
 package com.trendex.trendex.domain.orderbook.upbitorderbook.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -16,22 +16,24 @@ public class UpbitOrderBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String market;
+    private Long timestamp;
+    private Double totalAskSize;
+    private Double totalBidSize;
 
-    private long askPrice;
+    @OneToMany(mappedBy = "upbitOrderBook", cascade = CascadeType.ALL)
+    private List<UpbitOrderBookUnit> upbitOrderBookUnits = new ArrayList<>();
 
-    private long bidPrice;
-
-    private double askSize;
-
-    private double bidSize;
-
-    public UpbitOrderBook(String market, long askPrice, long bidPrice, double askSize, double bidSize) {
+    public UpbitOrderBook(String market, Long timestamp, Double totalAskSize, Double totalBidSize) {
         this.market = market;
-        this.askPrice = askPrice;
-        this.bidPrice = bidPrice;
-        this.askSize = askSize;
-        this.bidSize = bidSize;
+        this.timestamp = timestamp;
+        this.totalAskSize = totalAskSize;
+        this.totalBidSize = totalBidSize;
     }
+
+    public void addUpbitOrderBookUnits(UpbitOrderBookUnit upbitOrderBookUnits) {
+        this.upbitOrderBookUnits.add(upbitOrderBookUnits);
+        upbitOrderBookUnits.updateUpbitOrderBook(this);
+    }
+
 }

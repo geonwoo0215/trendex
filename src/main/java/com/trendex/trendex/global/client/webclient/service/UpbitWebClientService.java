@@ -27,7 +27,7 @@ public class UpbitWebClientService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public List<UpbitTicker> getTicker(String markets) {
+    public Mono<List<UpbitTickerResponse>> getTicker(String markets) {
 
         return upbitWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -37,9 +37,8 @@ public class UpbitWebClientService {
                 .header("accept", "application/json")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException()))
-                .bodyToFlux(UpbitTicker.class)
-                .collectList()
-                .block();
+                .bodyToFlux(UpbitTickerResponse.class)
+                .collectList();
 
     }
 
@@ -132,13 +131,6 @@ public class UpbitWebClientService {
 
     public Mono<UpbitOrderResponse> getOrders(String market, String side, String volume, String price, String ordType, String timeInForce) {
 
-        log.info("{}", market);
-        log.info("{}", side);
-        log.info("{}", volume);
-        log.info("{}", price);
-        log.info("{}", ordType);
-        log.info("{}", timeInForce);
-
         String jwtToken = jwtTokenProvider.createToken(market, side, volume, price, ordType, timeInForce);
 
         Map<String, String> bodyParams = new HashMap<>();
@@ -162,7 +154,6 @@ public class UpbitWebClientService {
             throw new RuntimeException("Failed to convert map to JSON", e);
         }
 
-        log.info("jsonbody = {}", jsonBody);
         return upbitWebClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/orders")
