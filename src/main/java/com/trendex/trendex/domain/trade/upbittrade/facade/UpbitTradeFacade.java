@@ -1,6 +1,5 @@
 package com.trendex.trendex.domain.trade.upbittrade.facade;
 
-import com.trendex.trendex.domain.trade.upbittrade.dto.MarketAggregateDto;
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeFetchService;
 import com.trendex.trendex.domain.trade.upbittrade.service.UpbitTradeService;
 import com.trendex.trendex.domain.upbitmarket.service.UpbitMarketService;
@@ -34,10 +33,5 @@ public class UpbitTradeFacade {
                 .subscribe();
     }
 
-    public MarketAggregateDto findAggregatedMarketData(String market, Long startTime) {
-
-        return upbitTradeService.findAggregatedMarketData(market, startTime);
-
-    }
 
 }

@@ -21,7 +21,6 @@ import org.springframework.test.annotation.Rollback;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @DataJpaTest
 @Import(DataLoader.class)
@@ -84,9 +83,9 @@ class UpbitTradeRepositoryTest {
         Long endTime = Timestamp.valueOf(LocalDateTime.now().plusHours(1L)).getTime();
 
 
-        Optional<MarketAggregateDto> aggregatedMarketData = upbitTradeRepository.findAggregatedMarketData(btcMarket, startTime, endTime);
+        List<MarketAggregateDto> aggregatedMarketData = upbitTradeRepository.findAggregatedMarketData(startTime, endTime);
 
-        Assertions.assertThat(aggregatedMarketData.get()).isNotNull();
+        Assertions.assertThat(aggregatedMarketData).isNotNull();
 
     }
 
