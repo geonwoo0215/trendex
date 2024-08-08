@@ -5,6 +5,7 @@ import com.trendex.trendex.domain.orderbook.binanceorderbook.service.BinanceOrde
 import com.trendex.trendex.domain.orderbook.binanceorderbook.service.BinanceOrderBookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +23,7 @@ public class BinanceOrderBookFacade {
 
     private final BinanceOrderBookFetchService binanceOrderBookFetchService;
 
-    //    @Scheduled(cron = "0 */3 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void fetchAndSaveBinanceData() {
         List<String> binanceSymbols = binanceSymbolService.findAll();
         binanceOrderBookFetchService.fetchBinanceData(binanceSymbols)
