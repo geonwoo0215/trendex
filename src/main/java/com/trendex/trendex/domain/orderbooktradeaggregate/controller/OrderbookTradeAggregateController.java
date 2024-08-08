@@ -1,8 +1,7 @@
-package com.trendex.trendex.domain.trade.upbittrade.controller;
+package com.trendex.trendex.domain.orderbooktradeaggregate.controller;
 
-import com.trendex.trendex.domain.rsi.dto.RsiResponse;
-import com.trendex.trendex.domain.trade.upbittrade.dto.MarketAggregateDto;
-import com.trendex.trendex.domain.trade.upbittrade.facade.UpbitTradeFacade;
+import com.trendex.trendex.domain.orderbooktradeaggregate.dto.response.OrderbookTradeAggregateResponse;
+import com.trendex.trendex.domain.orderbooktradeaggregate.service.OrderbookTradeAggregateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,14 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Tag(name = "업비트 거래조회", description = "업비트 거래조회")
 @RestController
 @RequiredArgsConstructor
-public class UpbitTradeController {
+public class OrderbookTradeAggregateController {
 
-    private final UpbitTradeFacade upbitTradeFacade;
+    private final OrderbookTradeAggregateService orderbookTradeAggregateService;
 
     @Operation(
             summary = "업비트 거래, 호가 정보 조회",
@@ -33,23 +31,21 @@ public class UpbitTradeController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "업비트 거래, 호가 정보를 계산하여 시간당 반환",
-                            content = @Content(schema = @Schema(implementation = RsiResponse.class))
+                            content = @Content(schema = @Schema(implementation = OrderbookTradeAggregateResponse.class))
                     )
             }
     )
 
-    @GetMapping(value = "/trades/upbit", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MarketAggregateDto> findAggregatedMarketData
+    @GetMapping(value = "/aggregate/upbit", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OrderbookTradeAggregateResponse> findAggregatedMarketData
             (
                     @RequestParam(value = "market") String market,
                     @RequestParam(value = "startTime")
                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime
             ) {
 
-        Long startTimeStamp = startTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        OrderbookTradeAggregateResponse response = orderbookTradeAggregateService.findOrderbookTradeAggregateByMarketAndTimestamp(market, startTime);
 
-
-        MarketAggregateDto response = upbitTradeFacade.findAggregatedMarketData(market, startTimeStamp);
         return ResponseEntity.ok(response);
     }
 

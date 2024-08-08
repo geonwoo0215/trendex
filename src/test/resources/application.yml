@@ -17,5 +17,9 @@ spring:
       hibernate:
         format_sql: true
 
+  batch:
+    jdbc:
+      initialize-schema: always
+
 access-key: accesskey
 secret-key: secretkey
