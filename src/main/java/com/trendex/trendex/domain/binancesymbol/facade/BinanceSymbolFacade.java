@@ -17,7 +17,7 @@ public class BinanceSymbolFacade {
 
     private final BinanceSymbolService binanceSymbolService;
 
-    @Scheduled(fixedRate = 86400000)
+    @Scheduled(cron = "0 0 0 * * SUN")
     public void fetchAndSaveBinanceData() {
         List<BinanceSymbol> binanceSymbols = binanceSymbolFetchService.fetchBinanceData();
         binanceSymbolService.saveAll(binanceSymbols);
